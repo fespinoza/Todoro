@@ -435,6 +435,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2Z7R9FQBNN;
 				INFOPLIST_FILE = Todoro/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fespinozacast.Todoro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -449,6 +450,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2Z7R9FQBNN;
 				INFOPLIST_FILE = Todoro/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fespinozacast.Todoro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -538,6 +540,7 @@
 				9BA346871F1793D800145BD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9BA346881F1793D800145BD4 /* Build configuration list for PBXNativeTarget "TodoroTests" */ = {
 			isa = XCConfigurationList;
@@ -546,6 +549,7 @@
 				9BA3468A1F1793D800145BD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9BA3468B1F1793D800145BD4 /* Build configuration list for PBXNativeTarget "TodoroUITests" */ = {
 			isa = XCConfigurationList;
@@ -554,6 +558,7 @@
 				9BA3468D1F1793D800145BD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

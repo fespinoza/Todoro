@@ -10,15 +10,13 @@ import UIKit
 import CoreData
 
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
-
   var detailViewController: DetailViewController? = nil
   var managedObjectContext: NSManagedObjectContext? = nil
-
 
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
-    navigationItem.leftBarButtonItem = editButtonItem
+//    navigationItem.leftBarButtonItem = editButtonItem
 
     let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
     navigationItem.rightBarButtonItem = addButton
@@ -26,6 +24,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
       let controllers = split.viewControllers
       detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
     }
+
+    navigationItem.largeTitleDisplayMode = .always
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -44,7 +44,10 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     let newTask = Task(context: context)
 
     // If appropriate, configure the new managed object.
+    let randomInt = Int(arc4random())
     newTask.createdAt = Date()
+    newTask.title = "random \(randomInt)"
+    newTask.id = UUID()
 
     // Save the context.
     do {
@@ -127,7 +130,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     fetchRequest.fetchBatchSize = 20
 
     // Edit the sort key as appropriate.
-    let sortDescriptor = NSSortDescriptor(key: "timestamp", ascending: false)
+    let sortDescriptor = NSSortDescriptor(key: "createdAt", ascending: false)
 
     fetchRequest.sortDescriptors = [sortDescriptor]
 

@@ -51,6 +51,7 @@
 		9BA3467C1F1793D800145BD4 /* TodoroUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodoroUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BA346801F1793D800145BD4 /* TodoroUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoroUITests.swift; sourceTree = "<group>"; };
 		9BA346821F1793D800145BD4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9BA3468E1F1793FC00145BD4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +82,7 @@
 		9BA3464F1F1793D500145BD4 = {
 			isa = PBXGroup;
 			children = (
+				9BA3468E1F1793FC00145BD4 /* README.md */,
 				9BA3465A1F1793D600145BD4 /* Todoro */,
 				9BA346741F1793D700145BD4 /* TodoroTests */,
 				9BA3467F1F1793D800145BD4 /* TodoroUITests */,

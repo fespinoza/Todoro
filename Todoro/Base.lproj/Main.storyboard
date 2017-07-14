@@ -33,14 +33,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fov-bf-Hia">
-                                <rect key="frame" x="116" y="143" width="143.5" height="90"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fov-bf-Hia">
+                                <rect key="frame" x="116.5" y="143" width="143.5" height="90"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="75"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7nD-dP-yFo">
-                                <rect key="frame" x="78" y="158" width="30" height="60"/>
+                                <rect key="frame" x="78.5" y="158" width="30" height="60"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="40"/>
                                 <state key="normal" title="-"/>
                                 <connections>
@@ -62,7 +62,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="qBM-Mr-pFk">
-                                <rect key="frame" x="0.0" y="258" width="375" height="150"/>
+                                <rect key="frame" x="0.0" y="258" width="375" height="180"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ngq-2O-5mq">
                                         <rect key="frame" x="133" y="0.0" width="109" height="30"/>
@@ -78,22 +78,29 @@
                                             <action selector="forcePomodoroCompletion:" destination="JEX-9P-axG" eventType="touchUpInside" id="sfh-Zw-f7o"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DYf-oL-Gui">
+                                        <rect key="frame" x="145.5" y="60" width="84" height="30"/>
+                                        <state key="normal" title="Finish Break"/>
+                                        <connections>
+                                            <action selector="finishBreak:" destination="JEX-9P-axG" eventType="touchUpInside" id="off-lx-fTm"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Riw-7h-lcz">
-                                        <rect key="frame" x="126.5" y="60" width="122" height="30"/>
+                                        <rect key="frame" x="126.5" y="90" width="122" height="30"/>
                                         <state key="normal" title="Cancel Pomodoro"/>
                                         <connections>
                                             <action selector="cancelPomodoro:" destination="JEX-9P-axG" eventType="touchUpInside" id="cth-6m-V5b"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qHJ-nW-Y1e">
-                                        <rect key="frame" x="103" y="90" width="169" height="30"/>
+                                        <rect key="frame" x="103" y="120" width="169" height="30"/>
                                         <state key="normal" title="Mark Task as Completed"/>
                                         <connections>
                                             <action selector="markTaskAsCompleted:" destination="JEX-9P-axG" eventType="touchUpInside" id="I19-YH-LJY"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lks-n5-fik">
-                                        <rect key="frame" x="147.5" y="120" width="80" height="30"/>
+                                        <rect key="frame" x="147.5" y="150" width="80" height="30"/>
                                         <state key="normal" title="Delete Task"/>
                                         <connections>
                                             <action selector="deleteTask:" destination="JEX-9P-axG" eventType="touchUpInside" id="smB-3o-3F8"/>
@@ -126,6 +133,7 @@
                         <outlet property="cancelPomodoroButton" destination="Riw-7h-lcz" id="JnP-Hn-3Dr"/>
                         <outlet property="completedPomodorosLabel" destination="hRb-Ik-OsZ" id="bNv-rm-xdn"/>
                         <outlet property="deleteTaskButton" destination="Lks-n5-fik" id="Dg5-CQ-Q3P"/>
+                        <outlet property="finishBreakButton" destination="DYf-oL-Gui" id="zNS-Yp-Pup"/>
                         <outlet property="forcePomodoroCompletionButton" destination="w5Y-22-JYB" id="zTp-VJ-jw5"/>
                         <outlet property="markTaskAsCompletedButton" destination="qHJ-nW-Y1e" id="e5j-xb-VnN"/>
                         <outlet property="removeMinutesButton" destination="7nD-dP-yFo" id="LXv-NG-UH6"/>

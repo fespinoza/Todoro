@@ -21,6 +21,17 @@ class DetailViewController: UIViewController {
     didSet { configureView() }
   }
 
+  let oneMinute: Double = 60.0
+
+  // 25 min by default
+  let defaultPomodoroTimeInSeconds: Double = 30
+  var currentPomodoroTimeInSeconds: Double = 30 // seconds for test purposes
+
+  var timer: Timer?
+
+  // temp
+  var pomodoroCount = 0
+
   // MARK: - IBOutlets
   @IBOutlet weak var completedPomodorosLabel: UILabel!
   @IBOutlet weak var timerLabel: UILabel!
@@ -34,7 +45,81 @@ class DetailViewController: UIViewController {
   @IBOutlet weak var markTaskAsCompletedButton: UIButton!
   @IBOutlet weak var deleteTaskButton: UIButton!
 
-  func configureView() {
+  // MARK: - View Cycle
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    configureView()
+  }
+
+  // MARK: - IBActions
+
+  @IBAction func addAMinuteToPomodoro(_ sender: Any) {
+    currentPomodoroTimeInSeconds += oneMinute
+    updateTimerLabel()
+  }
+
+  @IBAction func removeAMinuteToPomodoro(_ sender: Any) {
+    currentPomodoroTimeInSeconds -= oneMinute
+    updateTimerLabel()
+  }
+
+  @IBAction func startPomodoro(_ sender: Any) {
+    currentState = .pomodoroRunning
+
+    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
+      self.currentPomodoroTimeInSeconds -= 1
+      self.updateTimerLabel()
+      if self.currentPomodoroTimeInSeconds == 0 {
+        timer.invalidate()
+        self.completePomodoro()
+      }
+    }
+  }
+
+  @IBAction func forcePomodoroCompletion(_ sender: Any) {
+    if let timer = timer {
+      timer.invalidate()
+    }
+    completePomodoro()
+  }
+
+  @IBAction func cancelPomodoro(_ sender: Any) {
+    if let timer = timer {
+      timer.invalidate()
+    }
+    currentPomodoroTimeInSeconds = defaultPomodoroTimeInSeconds
+    currentState = .waiting
+  }
+
+  @IBAction func markTaskAsCompleted(_ sender: Any) {
+  }
+
+  @IBAction func deleteTask(_ sender: Any) {
+  }
+
+  // MARK: - Business Logic
+
+  fileprivate func numberOfMinutes() -> Double {
+    return floor(currentPomodoroTimeInSeconds / oneMinute)
+  }
+
+  fileprivate func numberOfSeconds() -> Double {
+    return currentPomodoroTimeInSeconds.truncatingRemainder(dividingBy: oneMinute)
+  }
+
+  fileprivate func completePomodoro() {
+    pomodoroCount += 1
+    currentPomodoroTimeInSeconds = defaultPomodoroTimeInSeconds
+    currentState = .waiting
+  }
+
+  // MARK: - View Logic
+
+  fileprivate func configureView() {
+    updateCompletedPomodorosLabel()
+    updateTimerLabel()
+
     switch currentState {
     case .waiting:
       addMinutesButton.isHidden = false
@@ -59,75 +144,20 @@ class DetailViewController: UIViewController {
     }
   }
 
-  // MARK: - View Cycle
-
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    configureView()
-  }
-
-  // MARK: - IBActions
-
-  @IBAction func addAMinuteToPomodoro(_ sender: Any) {
-    var minutes = numberOfMinutes()
-    minutes += 1
-
-    timerLabel.text = "\(minutes):00"
-  }
-
-  @IBAction func removeAMinuteToPomodoro(_ sender: Any) {
-    var minutes = numberOfMinutes()
-    if minutes >= 1 {
-      minutes -= 1
-    }
-
-    timerLabel.text = "\(minutes):00"
-  }
-
-  fileprivate func numberOfMinutes() -> Double {
-    let timeParts = (timerLabel.text?.split(separator: ":"))!
-    let minutesText = String(timeParts.first!)
-    return Double(minutesText)!
-  }
-
-  fileprivate func numberOfSeconds() -> Double {
-    let timeParts = (timerLabel.text?.split(separator: ":"))!
-    let secondsText = String(timeParts.last!)
-    return Double(secondsText)!
-  }
-
-  func updateTimer(numberOfSeconds: Double) {
-    let minutes = Int(floor(numberOfSeconds / 60.0))
-    let seconds = Int(numberOfSeconds.truncatingRemainder(dividingBy: 60.0))
-
-    timerLabel.text = "\(minutes):\(seconds)"
-  }
-
-  @IBAction func startPomodoro(_ sender: Any) {
-    currentState = .pomodoroRunning
-
-    var countDown = numberOfMinutes() * 60 + numberOfSeconds()
-    Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
-      countDown -= 1
-      self.updateTimer(numberOfSeconds: countDown)
-      if countDown == 0 {
-
-        timer.invalidate()
-        self.currentState = .waiting
-      }
+  fileprivate func updateCompletedPomodorosLabel() {
+    if pomodoroCount == 0 {
+      completedPomodorosLabel.text = ""
+    } else {
+      let pomodorosText = pomodoroCount > 1 ? "pomodoros" : "pomodoro"
+      completedPomodorosLabel.text = "\(pomodoroCount) \(pomodorosText) completed"
     }
   }
 
-  @IBAction func forcePomodoroCompletion(_ sender: Any) {
-  }
+  fileprivate func updateTimerLabel() {
+    let minutes = Int(numberOfMinutes())
+    let seconds = Int(numberOfSeconds())
+    let secondsText = String(format: "%02d", seconds)
 
-  @IBAction func cancelPomodoro(_ sender: Any) {
+    timerLabel.text = "\(minutes):\(secondsText)"
   }
-
-  @IBAction func markTaskAsCompleted(_ sender: Any) {
-  }
-
-  @IBAction func deleteTask(_ sender: Any) {
-  }
-
 }

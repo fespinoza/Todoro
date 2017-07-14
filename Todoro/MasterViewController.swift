@@ -115,6 +115,9 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
   func configureCell(_ cell: UITableViewCell, withTask task: Task) {
     cell.textLabel!.text = task.title
+    if task.isCompleted {
+      cell.textLabel!.textColor = UIColor.gray
+    }
   }
 
   // MARK: - Fetched results controller

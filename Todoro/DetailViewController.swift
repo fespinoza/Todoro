@@ -13,6 +13,7 @@ class DetailViewController: UIViewController {
     case waiting
     case pomodoroRunning
     case breakRunning
+    case taskCompleted
   }
 
   var detailItem: Task?
@@ -59,7 +60,14 @@ class DetailViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    configureView()
+
+    if let task = detailItem {
+      navigationItem.title = task.title
+
+      currentState = task.isCompleted ? .taskCompleted : .waiting
+    } else {
+      configureView()
+    }
   }
 
   // MARK: - IBActions
@@ -95,7 +103,11 @@ class DetailViewController: UIViewController {
   }
 
   @IBAction func markTaskAsCompleted(_ sender: Any) {
-    // TODO
+    detailItem?.isCompleted = true
+    (UIApplication.shared.delegate as? AppDelegate)!.saveContext()
+    currentState = .taskCompleted
+
+    // TODO: go back to the master view controller (only in compact mode i guess)
   }
 
   @IBAction func deleteTask(_ sender: Any) {
@@ -114,6 +126,8 @@ class DetailViewController: UIViewController {
 
   fileprivate func completePomodoro() {
     pomodoroCount += 1
+
+    // TODO: save pomodoro record
 
     let alertController = UIAlertController(
       title: "Pomodoro Finished",
@@ -206,6 +220,19 @@ class DetailViewController: UIViewController {
       completedPomodorosLabel.text = "You won a break..."
       completedPomodorosLabel.textColor = UIColor.gray
       timerLabel.textColor = UIColor.blue
+    case .taskCompleted:
+      timerLabel.textColor = UIColor.gray
+      completedPomodorosLabel.textColor = UIColor.gray
+
+      addMinutesButton.isHidden = true
+      removeMinutesButton.isHidden = true
+
+      startPomodoroButton.isHidden = true
+      forcePomodoroCompletionButton.isHidden = true
+      finishBreakButton.isHidden = true
+      cancelPomodoroButton.isHidden = true
+      markTaskAsCompletedButton.isHidden = true
+      deleteTaskButton.isHidden = false
     }
   }
 

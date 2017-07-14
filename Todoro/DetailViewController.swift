@@ -167,6 +167,8 @@ class DetailViewController: UIViewController {
     switch currentState {
     case .waiting:
       currentTimeInSeconds = defaultPomodoroTimeInSeconds
+      timerLabel.textColor = UIColor.black
+      completedPomodorosLabel.textColor = UIColor.black
 
       addMinutesButton.isHidden = false
       removeMinutesButton.isHidden = false
@@ -178,6 +180,9 @@ class DetailViewController: UIViewController {
       markTaskAsCompletedButton.isHidden = false
       deleteTaskButton.isHidden = false
     case .pomodoroRunning:
+      timerLabel.textColor = UIColor.black
+      completedPomodorosLabel.textColor = UIColor.black
+
       addMinutesButton.isHidden = true
       removeMinutesButton.isHidden = true
 
@@ -199,6 +204,8 @@ class DetailViewController: UIViewController {
       deleteTaskButton.isHidden = true
 
       completedPomodorosLabel.text = "You won a break..."
+      completedPomodorosLabel.textColor = UIColor.gray
+      timerLabel.textColor = UIColor.blue
     }
   }
 

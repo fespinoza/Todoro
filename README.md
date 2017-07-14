@@ -20,7 +20,6 @@ This is my first personal iOS project
 - [x] add logic for break
 - [ ] add `completed` boolean to Task.
 - [ ] delete task method implementation
-- [ ] add behavior for a break
 
 ### Design
 

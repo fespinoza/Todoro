@@ -16,9 +16,9 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
-//    navigationItem.leftBarButtonItem = editButtonItem
+    //    navigationItem.leftBarButtonItem = editButtonItem
 
-    let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
+    let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(displayNewTaskUI(_:)))
     navigationItem.rightBarButtonItem = addButton
     if let split = splitViewController {
       let controllers = split.viewControllers
@@ -42,13 +42,29 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     // Dispose of any resources that can be recreated.
   }
 
-  @objc
-  func insertNewObject(_ sender: Any) {
+  @objc func displayNewTaskUI(_ sender: Any) {
+    let alertController = UIAlertController(title: "Create New Task", message: nil, preferredStyle: .alert)
+
+    alertController.addTextField { (textField) in
+      textField.placeholder = "Task name"
+    }
+
+    alertController.addAction(UIAlertAction(title: "Create", style: .default) { (action) in
+      if let title = alertController.textFields?.first?.text {
+        self.insertNewObject(taskTitle: title)
+      }
+    })
+
+    alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+    present(alertController, animated: true, completion: nil)
+  }
+
+  func insertNewObject(taskTitle: String) {
     let context = self.fetchedResultsController.managedObjectContext
     let newTask = Task(context: context)
 
     // If appropriate, configure the new managed object.
-    let randomInt = Int(arc4random())
     newTask.createdAt = Date()
     newTask.title = taskTitle
     newTask.id = UUID().uuidString

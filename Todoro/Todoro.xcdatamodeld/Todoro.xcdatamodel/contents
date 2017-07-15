@@ -3,18 +3,18 @@
     <entity name="Pomodoro" representedClassName="Pomodoro" syncable="YES" codeGenerationType="class">
         <attribute name="completionTime" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="duration" attributeType="Float" minValueString="0" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="id" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="id" attributeType="String" syncable="YES"/>
         <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Task" inverseName="pomodoros" inverseEntity="Task" syncable="YES"/>
     </entity>
     <entity name="Task" representedClassName="Task" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="id" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="id" attributeType="String" syncable="YES"/>
         <attribute name="isCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
         <relationship name="pomodoros" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Pomodoro" inverseName="task" inverseEntity="Pomodoro" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Pomodoro" positionX="270" positionY="216" width="128" height="103"/>
+        <element name="Pomodoro" positionX="270" positionY="216" width="128" height="105"/>
         <element name="Task" positionX="-72" positionY="201" width="128" height="120"/>
     </elements>
 </model>

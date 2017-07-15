@@ -25,7 +25,11 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
       detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
     }
 
-    navigationItem.largeTitleDisplayMode = .always
+    if #available(iOS 11.0, *) {
+      navigationItem.largeTitleDisplayMode = .always
+    } else {
+      // Fallback on earlier versions
+    }
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -46,8 +50,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     // If appropriate, configure the new managed object.
     let randomInt = Int(arc4random())
     newTask.createdAt = Date()
-    newTask.title = "random \(randomInt)"
-    newTask.id = UUID()
+    newTask.title = taskTitle
+    newTask.id = UUID().uuidString
 
     // Save the context.
     do {

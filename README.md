@@ -14,7 +14,8 @@ This is my first personal iOS project
 
 ### Master View
 
-### New Task View
+- [ ] scratch text for completed tasks
+- [x] add alert with textfield to create task
 
 ### Detail View
 
@@ -22,12 +23,12 @@ This is my first personal iOS project
 - [x] add validation of time value
 - [x] show alert when time is done
 - [x] add logic for break
-- [ ] add `completed` boolean to Task.
+- [x] add `completed` boolean to Task.
 - [ ] mark task as completed implementation
-- [ ] delete task method implementation
+- [x] delete task method implementation
 - [ ] play sound when pomodoro is completed
 - [ ] play sound when break is completed
-- [ ] completed task detail view state
+- [x] completed task detail view state
 
 ### Design
 

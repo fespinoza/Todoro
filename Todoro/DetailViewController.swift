@@ -111,7 +111,24 @@ class DetailViewController: UIViewController {
   }
 
   @IBAction func deleteTask(_ sender: Any) {
-    // TODO
+    guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+          let task = detailItem else {
+      return
+    }
+
+    let alertController = UIAlertController(title: "Deleting Task", message: "Are you sure you want to delete the task?", preferredStyle: .alert)
+    alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
+      let context = appDelegate.persistentContainer.viewContext
+
+      context.delete(task)
+      appDelegate.saveContext()
+
+      // TODO: go back to previous controller
+    }))
+
+    alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+    present(alertController, animated: true, completion: nil)
   }
 
   // MARK: - Business Logic

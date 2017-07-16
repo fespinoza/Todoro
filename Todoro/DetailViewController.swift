@@ -108,6 +108,9 @@ class DetailViewController: UIViewController {
     currentState = .taskCompleted
 
     // TODO: go back to the master view controller (only in compact mode i guess)
+    if let navigationVC = self.splitViewController?.viewControllers.first as? UINavigationController {
+      navigationVC.popToRootViewController(animated: true)
+    }
   }
 
   @IBAction func deleteTask(_ sender: Any) {
@@ -123,7 +126,9 @@ class DetailViewController: UIViewController {
       context.delete(task)
       appDelegate.saveContext()
 
-      // TODO: go back to previous controller
+      if let navigationVC = self.splitViewController?.viewControllers.first as? UINavigationController {
+        navigationVC.popToRootViewController(animated: true)
+      }
     }))
 
     alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))

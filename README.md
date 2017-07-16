@@ -16,6 +16,7 @@ This is my first personal iOS project
 
 - [ ] scratch text for completed tasks
 - [x] add alert with textfield to create task
+- [ ] show the completed pomodoro count in table view
 
 ### Detail View
 
@@ -24,11 +25,12 @@ This is my first personal iOS project
 - [x] show alert when time is done
 - [x] add logic for break
 - [x] add `completed` boolean to Task.
-- [ ] mark task as completed implementation
+- [x] mark task as completed implementation
 - [x] delete task method implementation
 - [ ] play sound when pomodoro is completed
 - [ ] play sound when break is completed
 - [x] completed task detail view state
+- [ ] save a pomodoro record when completing a pomodoro
 
 ### Design
 

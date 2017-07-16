@@ -25,13 +25,14 @@ class DetailViewController: UIViewController {
   let oneMinute: Double = 60.0
 
   // 25 min by default - 30 for testing purposes
-  let defaultPomodoroTimeInSeconds: Double = 30
-  var currentTimeInSeconds: Double = 30 {
+  let defaultPomodoroTimeInSeconds: Double = 25 * 60
+  var currentTimeInSeconds: Double = 25 * 60 {
     didSet {
       updateTimerLabel()
     }
   }
-  let defaultBreakTimeInSeconds: Double = 10
+  var lastTimerTimeInSeconds: Int?
+  let defaultBreakTimeInSeconds: Double = 5 * 60
 
   var timer: Timer?
 
@@ -67,6 +68,14 @@ class DetailViewController: UIViewController {
       currentState = task.isCompleted ? .taskCompleted : .waiting
     } else {
       configureView()
+    }
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+
+    if let task = detailItem {
+      pomodoroCount = task.pomodoros?.count ?? 0
     }
   }
 
@@ -149,7 +158,7 @@ class DetailViewController: UIViewController {
   fileprivate func completePomodoro() {
     pomodoroCount += 1
 
-    // TODO: save pomodoro record
+    savePomodoro()
 
     let alertController = UIAlertController(
       title: "Pomodoro Finished",
@@ -192,6 +201,32 @@ class DetailViewController: UIViewController {
     alertController.addAction(cancelButton)
 
     self.present(alertController, animated: true, completion: nil)
+  }
+
+  func savePomodoro() {
+    guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+      let task = detailItem,
+      let lastTimerTimeInSeconds = lastTimerTimeInSeconds else {
+        return
+    }
+
+    let context = appDelegate.persistentContainer.viewContext
+    let newPomodoro = Pomodoro(context: context)
+
+    newPomodoro.completionTime = Date()
+    newPomodoro.task = task
+    newPomodoro.id = UUID().uuidString
+    newPomodoro.duration = Float(lastTimerTimeInSeconds)
+
+    // Save the context.
+    do {
+      try context.save()
+    } catch {
+      // Replace this implementation with code to handle the error appropriately.
+      // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+      let nserror = error as NSError
+      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+    }
   }
 
   // MARK: - View Logic
@@ -278,6 +313,7 @@ class DetailViewController: UIViewController {
   // MARK: - Timer
 
   fileprivate func startTimer() {
+    lastTimerTimeInSeconds = Int(currentTimeInSeconds)
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
       self.timerUpdate()
     }

@@ -144,6 +144,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     } else {
       cell.textLabel!.text = task.title
     }
+
+    cell.detailTextLabel?.text = "\(task.pomodoros?.count ?? 0)"
   }
 
   // MARK: - Fetched results controller

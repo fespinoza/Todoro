@@ -14,7 +14,7 @@ This is my first personal iOS project
 
 ### Master View
 
-- [ ] scratch text for completed tasks
+- [x] scratch text for completed tasks
 - [x] add alert with textfield to create task
 - [ ] show the completed pomodoro count in table view
 

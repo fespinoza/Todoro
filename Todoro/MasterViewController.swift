@@ -134,9 +134,15 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
   }
 
   func configureCell(_ cell: UITableViewCell, withTask task: Task) {
-    cell.textLabel!.text = task.title
     if task.isCompleted {
-      cell.textLabel!.textColor = UIColor.gray
+      let mutableAttributedString = NSMutableAttributedString(string: task.title!)
+      let fullRange = NSMakeRange(0, mutableAttributedString.string.count)
+      mutableAttributedString.addAttribute(.foregroundColor, value: UIColor.gray, range: fullRange)
+      mutableAttributedString.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.styleSingle.rawValue, range: fullRange)
+      mutableAttributedString.addAttribute(.strikethroughColor, value: UIColor.gray, range: fullRange)
+      cell.textLabel?.attributedText = mutableAttributedString
+    } else {
+      cell.textLabel!.text = task.title
     }
   }
 

@@ -11,7 +11,7 @@
         <attribute name="id" attributeType="String" syncable="YES"/>
         <attribute name="isCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
-        <relationship name="pomodoros" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Pomodoro" inverseName="task" inverseEntity="Pomodoro" syncable="YES"/>
+        <relationship name="pomodoros" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Pomodoro" inverseName="task" inverseEntity="Pomodoro" syncable="YES"/>
     </entity>
     <elements>
         <element name="Pomodoro" positionX="270" positionY="216" width="128" height="105"/>

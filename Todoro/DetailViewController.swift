@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVKit
 
 class DetailViewController: UIViewController {
   enum State {
@@ -35,6 +36,7 @@ class DetailViewController: UIViewController {
   let defaultBreakTimeInSeconds: Double = 5 * 60
 
   var timer: Timer?
+  var player = AVAudioPlayer()
 
   // temp
   var pomodoroCount = 0 {
@@ -156,6 +158,7 @@ class DetailViewController: UIViewController {
   }
 
   fileprivate func completePomodoro() {
+    playBell()
     pomodoroCount += 1
 
     savePomodoro()
@@ -182,6 +185,8 @@ class DetailViewController: UIViewController {
   }
 
   fileprivate func completeBreak() {
+    playBell()
+
     let alertController = UIAlertController(
       title: "Break Finished",
       message: "Do you want to work during another pomodoro?",
@@ -334,6 +339,27 @@ class DetailViewController: UIViewController {
   fileprivate func stopTimer() {
     if let timer = timer {
       timer.invalidate()
+    }
+  }
+
+  // MARK: - Sounds
+
+  fileprivate func playBell() {
+    guard let path = Bundle.main.path(forResource: "bell", ofType: "mp3") else {
+      return
+    }
+    let url = URL(fileURLWithPath: path)
+
+    do {
+      player = try AVAudioPlayer(contentsOf: url)
+      player.volume = 1.0
+      player.currentTime = 0
+      player.prepareToPlay()
+      player.play()
+    } catch let error as NSError {
+      print(error.localizedDescription)
+    } catch {
+      print("AVAudioPlayer init failed")
     }
   }
 }

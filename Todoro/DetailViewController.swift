@@ -10,6 +10,12 @@ import UIKit
 import AVKit
 
 class DetailViewController: UIViewController {
+  private struct DefaultValues {
+    static let oneMinute: Double = 60.0
+    static let testTimerInSeconds: Double = oneMinute
+    static let pomodoroTimerInSeconds: Double = 25 * oneMinute
+  }
+
   enum State {
     case waiting
     case pomodoroRunning
@@ -23,17 +29,15 @@ class DetailViewController: UIViewController {
     didSet { configureView() }
   }
 
-  let oneMinute: Double = 60.0
-
   // 25 min by default - 30 for testing purposes
-  let defaultPomodoroTimeInSeconds: Double = 25 * 60
-  var currentTimeInSeconds: Double = 25 * 60 {
+  let defaultPomodoroTimeInSeconds: Double = DefaultValues.testTimerInSeconds
+  var currentTimeInSeconds: Double = DefaultValues.testTimerInSeconds {
     didSet {
       updateTimerLabel()
     }
   }
   var lastTimerTimeInSeconds: Int?
-  let defaultBreakTimeInSeconds: Double = 5 * 60
+  let defaultBreakTimeInSeconds: Double = DefaultValues.testTimerInSeconds
 
   var timer: Timer?
   var player = AVAudioPlayer()
@@ -84,12 +88,12 @@ class DetailViewController: UIViewController {
   // MARK: - IBActions
 
   @IBAction func addAMinuteToPomodoro(_ sender: Any) {
-    currentTimeInSeconds += oneMinute
+    currentTimeInSeconds += DefaultValues.oneMinute
   }
 
   @IBAction func removeAMinuteToPomodoro(_ sender: Any) {
     if currentTimeInSeconds >= 1 {
-      currentTimeInSeconds -= oneMinute
+      currentTimeInSeconds -= DefaultValues.oneMinute
     }
   }
 
@@ -150,11 +154,11 @@ class DetailViewController: UIViewController {
   // MARK: - Business Logic
 
   fileprivate func numberOfMinutes() -> Double {
-    return floor(currentTimeInSeconds / oneMinute)
+    return floor(currentTimeInSeconds / DefaultValues.oneMinute)
   }
 
   fileprivate func numberOfSeconds() -> Double {
-    return currentTimeInSeconds.truncatingRemainder(dividingBy: oneMinute)
+    return currentTimeInSeconds.truncatingRemainder(dividingBy: DefaultValues.oneMinute)
   }
 
   fileprivate func completePomodoro() {
@@ -228,7 +232,8 @@ class DetailViewController: UIViewController {
       try context.save()
     } catch {
       // Replace this implementation with code to handle the error appropriately.
-      // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+      // fatalError() causes the application to generate a crash log and terminate.
+      // You should not use this function in a shipping application, although it may be useful during development.
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }

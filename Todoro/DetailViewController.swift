@@ -52,11 +52,13 @@ class DetailViewController: UIViewController {
 
   // MARK: - IBOutlets
   @IBOutlet weak var completedPomodorosLabel: UILabel!
-  @IBOutlet weak var timerLabel: UILabel!
+
 
   @IBOutlet weak var addMinutesButton: UIButton!
   @IBOutlet weak var removeMinutesButton: UIButton!
-
+  @IBOutlet weak var minutesLabel: UILabel!
+  @IBOutlet weak var secondsLabel: UILabel!
+  @IBOutlet weak var timeSeparatorLabel: UILabel!
   @IBOutlet weak var startPomodoroButton: UIButton!
   @IBOutlet weak var forcePomodoroCompletionButton: UIButton!
   @IBOutlet weak var finishBreakButton: UIButton!
@@ -250,7 +252,7 @@ class DetailViewController: UIViewController {
     switch currentState {
     case .waiting:
       currentTimeInSeconds = defaultPomodoroTimeInSeconds
-      timerLabel.textColor = UIColor.black
+      setTimerLabels(color: UIColor.black)
       completedPomodorosLabel.textColor = UIColor.black
 
       addMinutesButton.isHidden = false
@@ -263,8 +265,7 @@ class DetailViewController: UIViewController {
       markTaskAsCompletedButton.isHidden = false
       deleteTaskButton.isHidden = false
     case .pomodoroRunning:
-      timerLabel.textColor = UIColor.black
-      completedPomodorosLabel.textColor = UIColor.black
+      setTimerLabels(color: UIColor.black)
 
       addMinutesButton.isHidden = true
       removeMinutesButton.isHidden = true
@@ -288,9 +289,9 @@ class DetailViewController: UIViewController {
 
       completedPomodorosLabel.text = "You won a break..."
       completedPomodorosLabel.textColor = UIColor.gray
-      timerLabel.textColor = UIColor.blue
+      setTimerLabels(color: UIColor.blue)
     case .taskCompleted:
-      timerLabel.textColor = UIColor.gray
+      setTimerLabels(color: UIColor.gray)
       completedPomodorosLabel.textColor = UIColor.gray
 
       addMinutesButton.isHidden = true
@@ -317,9 +318,15 @@ class DetailViewController: UIViewController {
   fileprivate func updateTimerLabel() {
     let minutes = Int(numberOfMinutes())
     let seconds = Int(numberOfSeconds())
-    let secondsText = String(format: "%02d", seconds)
 
-    timerLabel.text = "\(minutes):\(secondsText)"
+    minutesLabel.text = "\(minutes)"
+    secondsLabel.text = String(format: "%02d", seconds)
+  }
+
+  fileprivate func setTimerLabels(color: UIColor) {
+    minutesLabel.textColor = color
+    timeSeparatorLabel.textColor = color
+    secondsLabel.textColor = color
   }
 
   // MARK: - Timer

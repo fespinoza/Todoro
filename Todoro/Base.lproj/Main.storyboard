@@ -7,6 +7,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13137.5"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -34,22 +35,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fov-bf-Hia">
-                                <rect key="frame" x="116.5" y="143" width="143.5" height="90"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="75"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7nD-dP-yFo">
-                                <rect key="frame" x="78.5" y="158" width="30" height="60"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
-                                <state key="normal" title="-"/>
-                                <connections>
-                                    <action selector="removeAMinuteToPomodoro:" destination="JEX-9P-axG" eventType="touchUpInside" id="oAY-3X-N72"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f9l-bO-EgG">
-                                <rect key="frame" x="267.5" y="158" width="30" height="60"/>
+                                <rect key="frame" x="299" y="149" width="30" height="60"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="40"/>
                                 <state key="normal" title="+"/>
                                 <connections>
@@ -62,8 +49,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="qBM-Mr-pFk">
-                                <rect key="frame" x="0.0" y="258" width="375" height="180"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="qBM-Mr-pFk">
+                                <rect key="frame" x="0.0" y="258" width="375" height="220"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ngq-2O-5mq">
                                         <rect key="frame" x="133" y="0.0" width="109" height="30"/>
@@ -73,35 +60,35 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w5Y-22-JYB">
-                                        <rect key="frame" x="126.5" y="30" width="122" height="30"/>
+                                        <rect key="frame" x="126.5" y="38" width="122" height="30"/>
                                         <state key="normal" title="Force Completion"/>
                                         <connections>
                                             <action selector="forcePomodoroCompletion:" destination="JEX-9P-axG" eventType="touchUpInside" id="sfh-Zw-f7o"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DYf-oL-Gui">
-                                        <rect key="frame" x="145.5" y="60" width="84" height="30"/>
+                                        <rect key="frame" x="145.5" y="76" width="84" height="30"/>
                                         <state key="normal" title="Finish Break"/>
                                         <connections>
                                             <action selector="finishBreak:" destination="JEX-9P-axG" eventType="touchUpInside" id="off-lx-fTm"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Riw-7h-lcz">
-                                        <rect key="frame" x="126.5" y="90" width="122" height="30"/>
+                                        <rect key="frame" x="126.5" y="114" width="122" height="30"/>
                                         <state key="normal" title="Cancel Pomodoro"/>
                                         <connections>
                                             <action selector="cancelPomodoro:" destination="JEX-9P-axG" eventType="touchUpInside" id="cth-6m-V5b"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qHJ-nW-Y1e">
-                                        <rect key="frame" x="103" y="120" width="169" height="30"/>
+                                        <rect key="frame" x="103" y="152" width="169" height="30"/>
                                         <state key="normal" title="Mark Task as Completed"/>
                                         <connections>
                                             <action selector="markTaskAsCompleted:" destination="JEX-9P-axG" eventType="touchUpInside" id="I19-YH-LJY"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lks-n5-fik">
-                                        <rect key="frame" x="147.5" y="150" width="80" height="30"/>
+                                        <rect key="frame" x="147.5" y="190" width="80" height="30"/>
                                         <state key="normal" title="Delete Task"/>
                                         <connections>
                                             <action selector="deleteTask:" destination="JEX-9P-axG" eventType="touchUpInside" id="smB-3o-3F8"/>
@@ -109,20 +96,50 @@
                                     </button>
                                 </subviews>
                             </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="25" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="36Z-NZ-Qdq" userLabel="minutes">
+                                <rect key="frame" x="91.5" y="134" width="86.5" height="90"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="75"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=":" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tEi-WE-E77" userLabel="timeSeparator">
+                                <rect key="frame" x="178" y="134" width="19.5" height="90"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="75"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZvQ-rs-JcA" userLabel="seconds">
+                                <rect key="frame" x="197.5" y="134" width="91.5" height="90"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="75"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7nD-dP-yFo">
+                                <rect key="frame" x="51.5" y="149" width="30" height="60"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                                <state key="normal" title="-"/>
+                                <connections>
+                                    <action selector="removeAMinuteToPomodoro:" destination="JEX-9P-axG" eventType="touchUpInside" id="oAY-3X-N72"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="f9l-bO-EgG" firstAttribute="centerY" secondItem="Fov-bf-Hia" secondAttribute="centerY" id="1VJ-fb-9B0"/>
+                            <constraint firstItem="ZvQ-rs-JcA" firstAttribute="leading" secondItem="tEi-WE-E77" secondAttribute="trailing" id="1FG-Pf-9Uv"/>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="hRb-Ik-OsZ" secondAttribute="trailing" id="4ve-Mi-39M"/>
-                            <constraint firstItem="7nD-dP-yFo" firstAttribute="centerY" secondItem="Fov-bf-Hia" secondAttribute="centerY" id="DUK-H0-t5z"/>
+                            <constraint firstItem="36Z-NZ-Qdq" firstAttribute="leading" secondItem="7nD-dP-yFo" secondAttribute="trailing" constant="10" id="6iZ-Zo-Fj3"/>
+                            <constraint firstItem="f9l-bO-EgG" firstAttribute="centerY" secondItem="7nD-dP-yFo" secondAttribute="centerY" id="CwS-4g-XeG"/>
                             <constraint firstItem="hRb-Ik-OsZ" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="EsN-xc-b9U"/>
-                            <constraint firstItem="Fov-bf-Hia" firstAttribute="centerX" secondItem="svH-Pt-448" secondAttribute="centerX" id="IAe-lc-8bx"/>
-                            <constraint firstItem="qBM-Mr-pFk" firstAttribute="top" secondItem="Fov-bf-Hia" secondAttribute="bottom" constant="25" id="ITl-Xh-Zg1"/>
-                            <constraint firstItem="f9l-bO-EgG" firstAttribute="leading" secondItem="Fov-bf-Hia" secondAttribute="trailing" constant="8" id="Reg-c2-dA6"/>
+                            <constraint firstItem="tEi-WE-E77" firstAttribute="centerY" secondItem="7nD-dP-yFo" secondAttribute="centerY" id="Ss3-gX-5Sw"/>
                             <constraint firstItem="hRb-Ik-OsZ" firstAttribute="top" secondItem="VUw-jc-0yf" secondAttribute="top" constant="16" id="TWB-og-B6s"/>
-                            <constraint firstItem="Fov-bf-Hia" firstAttribute="leading" secondItem="7nD-dP-yFo" secondAttribute="trailing" constant="8" id="YRy-h1-z8f"/>
-                            <constraint firstItem="Fov-bf-Hia" firstAttribute="top" secondItem="hRb-Ik-OsZ" secondAttribute="bottom" constant="42.5" id="loE-pl-w6B"/>
+                            <constraint firstItem="tEi-WE-E77" firstAttribute="top" secondItem="hRb-Ik-OsZ" secondAttribute="bottom" constant="33.5" id="a4v-TN-aWr"/>
+                            <constraint firstItem="tEi-WE-E77" firstAttribute="leading" secondItem="36Z-NZ-Qdq" secondAttribute="trailing" id="ahb-3X-dlB"/>
+                            <constraint firstItem="f9l-bO-EgG" firstAttribute="leading" secondItem="ZvQ-rs-JcA" secondAttribute="trailing" constant="10" id="hJw-xf-fB6"/>
+                            <constraint firstItem="ZvQ-rs-JcA" firstAttribute="centerY" secondItem="7nD-dP-yFo" secondAttribute="centerY" id="hzt-CK-PAz"/>
+                            <constraint firstItem="tEi-WE-E77" firstAttribute="centerX" secondItem="svH-Pt-448" secondAttribute="centerX" id="ixl-Xz-BjV"/>
+                            <constraint firstItem="qBM-Mr-pFk" firstAttribute="top" secondItem="tEi-WE-E77" secondAttribute="bottom" constant="34" id="npN-c9-opv"/>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="qBM-Mr-pFk" secondAttribute="trailing" id="uVZ-vU-zjN"/>
+                            <constraint firstItem="36Z-NZ-Qdq" firstAttribute="centerY" secondItem="7nD-dP-yFo" secondAttribute="centerY" id="uXP-fd-4ma"/>
                             <constraint firstItem="qBM-Mr-pFk" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="wKj-Ux-exz"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
@@ -137,9 +154,11 @@
                         <outlet property="finishBreakButton" destination="DYf-oL-Gui" id="zNS-Yp-Pup"/>
                         <outlet property="forcePomodoroCompletionButton" destination="w5Y-22-JYB" id="zTp-VJ-jw5"/>
                         <outlet property="markTaskAsCompletedButton" destination="qHJ-nW-Y1e" id="e5j-xb-VnN"/>
+                        <outlet property="minutesLabel" destination="36Z-NZ-Qdq" id="eri-SY-nal"/>
                         <outlet property="removeMinutesButton" destination="7nD-dP-yFo" id="LXv-NG-UH6"/>
+                        <outlet property="secondsLabel" destination="ZvQ-rs-JcA" id="EJZ-p3-dvo"/>
                         <outlet property="startPomodoroButton" destination="Ngq-2O-5mq" id="Vvk-BL-6u6"/>
-                        <outlet property="timerLabel" destination="Fov-bf-Hia" id="PZR-Uf-cAJ"/>
+                        <outlet property="timeSeparatorLabel" destination="tEi-WE-E77" id="QSG-Uf-5vc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>

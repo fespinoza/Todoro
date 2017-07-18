@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
@@ -24,12 +25,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
     let controller = masterNavigationController.topViewController as! MasterViewController
     controller.managedObjectContext = self.persistentContainer.viewContext
+
+//    application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
+    let notificationCenter = UNUserNotificationCenter.current()
+    notificationCenter.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+      if granted {
+        print("notifications granted")
+      } else {
+        print("notifications error \(error!.localizedDescription)")
+      }
+    }
+
     return true
   }
 
   func applicationWillResignActive(_ application: UIApplication) {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    print("")
+    print(#function)
+    print("scheduling local notifications")
+
+    let content = UNMutableNotificationContent()
+    content.title = "Pomodoro Done"
+    content.body = "Good job"
+
+    // Deliver the notification in five seconds.
+    content.sound = UNNotificationSound.default()
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 15, repeats: false)
+
+    // Schedule the notification.
+    let request = UNNotificationRequest(identifier: "pomodoro", content: content, trigger: trigger)
+    let center = UNUserNotificationCenter.current()
+    center.add(request, withCompletionHandler: nil)
   }
 
   func applicationDidEnterBackground(_ application: UIApplication) {
@@ -45,6 +73,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
   func applicationDidBecomeActive(_ application: UIApplication) {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     application.isIdleTimerDisabled = true
+
+    UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
+      print(notificationRequests)
+      notificationRequests.forEach({ (notification) in
+        print(notification)
+        if let trigger = notification.trigger as? UNTimeIntervalNotificationTrigger {
+          print(trigger.timeInterval)
+        }
+      })
+    }
+
+    print("")
+    print(#function)
+    print("pending notifications canceled")
+    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["pomodoro"])
   }
 
   func applicationWillTerminate(_ application: UIApplication) {

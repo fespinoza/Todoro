@@ -10,10 +10,11 @@ import UIKit
 import AVKit
 
 class DetailViewController: UIViewController {
-  private struct DefaultValues {
+  private struct Default {
     static let oneMinute: Double = 60.0
-    static let testTimerInSeconds: Double = oneMinute
-    static let pomodoroTimerInSeconds: Double = 25 * oneMinute
+    static let testTimerInSeconds = oneMinute
+    static let pomodoroTimerInSeconds = 25 * oneMinute
+    static let breakTimerInSecords = 5 * oneMinute
   }
 
   enum State {
@@ -30,14 +31,14 @@ class DetailViewController: UIViewController {
   }
 
   // 25 min by default - 30 for testing purposes
-  let defaultPomodoroTimeInSeconds: Double = DefaultValues.testTimerInSeconds
-  var currentTimeInSeconds: Double = DefaultValues.testTimerInSeconds {
+  let defaultPomodoroTimeInSeconds: Double = Default.pomodoroTimerInSeconds
+  var currentTimeInSeconds: Double = Default.pomodoroTimerInSeconds {
     didSet {
       updateTimerLabel()
     }
   }
   var lastTimerTimeInSeconds: Int?
-  let defaultBreakTimeInSeconds: Double = DefaultValues.testTimerInSeconds
+  let defaultBreakTimeInSeconds: Double = Default.breakTimerInSecords
 
   var timer: Timer?
   var player = AVAudioPlayer()
@@ -88,17 +89,18 @@ class DetailViewController: UIViewController {
   // MARK: - IBActions
 
   @IBAction func addAMinuteToPomodoro(_ sender: Any) {
-    currentTimeInSeconds += DefaultValues.oneMinute
+    currentTimeInSeconds += Default.oneMinute
   }
 
   @IBAction func removeAMinuteToPomodoro(_ sender: Any) {
     if currentTimeInSeconds >= 1 {
-      currentTimeInSeconds -= DefaultValues.oneMinute
+      currentTimeInSeconds -= Default.oneMinute
     }
   }
 
   @IBAction func startPomodoro(_ sender: Any) {
     currentState = .pomodoroRunning
+    lastTimerTimeInSeconds = Int(currentTimeInSeconds)
     startTimer()
   }
 
@@ -154,11 +156,11 @@ class DetailViewController: UIViewController {
   // MARK: - Business Logic
 
   fileprivate func numberOfMinutes() -> Double {
-    return floor(currentTimeInSeconds / DefaultValues.oneMinute)
+    return floor(currentTimeInSeconds / Default.oneMinute)
   }
 
   fileprivate func numberOfSeconds() -> Double {
-    return currentTimeInSeconds.truncatingRemainder(dividingBy: DefaultValues.oneMinute)
+    return currentTimeInSeconds.truncatingRemainder(dividingBy: Default.oneMinute)
   }
 
   fileprivate func completePomodoro() {
@@ -323,7 +325,6 @@ class DetailViewController: UIViewController {
   // MARK: - Timer
 
   fileprivate func startTimer() {
-    lastTimerTimeInSeconds = Int(currentTimeInSeconds)
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
       self.timerUpdate()
     }

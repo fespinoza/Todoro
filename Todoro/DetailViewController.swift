@@ -197,12 +197,12 @@ class DetailViewController: UIViewController {
       preferredStyle: .alert
     )
 
-    let breakButton = UIAlertAction(title: "Sure", style: .default) { (action) in
+    let newPomodoroButton = UIAlertAction(title: "Sure", style: .default) { (action) in
       self.currentState = .pomodoroRunning
-      self.currentTimeInSeconds = self.defaultPomodoroTimeInSeconds
+      self.currentTimeInSeconds = Double(self.lastTimerTimeInSeconds!)
       self.startTimer()
     }
-    alertController.addAction(breakButton)
+    alertController.addAction(newPomodoroButton)
 
     let cancelButton = UIAlertAction(title: "Done", style: .cancel) { (action) in
       self.currentState = .waiting

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9B65ADC01F1D1C28005996B3 /* bell.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B65ADBF1F1D1BD1005996B3 /* bell.mp3 */; };
 		9BA3465C1F1793D600145BD4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA3465B1F1793D600145BD4 /* AppDelegate.swift */; };
 		9BA3465F1F1793D600145BD4 /* Todoro.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9BA3465D1F1793D600145BD4 /* Todoro.xcdatamodeld */; };
 		9BA346611F1793D600145BD4 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA346601F1793D600145BD4 /* MasterViewController.swift */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9B65ADBF1F1D1BD1005996B3 /* bell.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bell.mp3; sourceTree = "<group>"; };
 		9BA346581F1793D600145BD4 /* Todoro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todoro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BA3465B1F1793D600145BD4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9BA3465E1F1793D600145BD4 /* Todoro.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Todoro.xcdatamodel; sourceTree = "<group>"; };
@@ -51,6 +53,7 @@
 		9BA3467C1F1793D800145BD4 /* TodoroUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodoroUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BA346801F1793D800145BD4 /* TodoroUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoroUITests.swift; sourceTree = "<group>"; };
 		9BA346821F1793D800145BD4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9BA3468E1F1793FC00145BD4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,7 @@
 		9BA3464F1F1793D500145BD4 = {
 			isa = PBXGroup;
 			children = (
+				9BA3468E1F1793FC00145BD4 /* README.md */,
 				9BA3465A1F1793D600145BD4 /* Todoro */,
 				9BA346741F1793D700145BD4 /* TodoroTests */,
 				9BA3467F1F1793D800145BD4 /* TodoroUITests */,
@@ -101,6 +105,7 @@
 		9BA3465A1F1793D600145BD4 /* Todoro */ = {
 			isa = PBXGroup;
 			children = (
+				9B65ADBF1F1D1BD1005996B3 /* bell.mp3 */,
 				9BA3465B1F1793D600145BD4 /* AppDelegate.swift */,
 				9BA346601F1793D600145BD4 /* MasterViewController.swift */,
 				9BA346621F1793D600145BD4 /* DetailViewController.swift */,
@@ -235,6 +240,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B65ADC01F1D1C28005996B3 /* bell.mp3 in Resources */,
 				9BA3466B1F1793D600145BD4 /* LaunchScreen.storyboard in Resources */,
 				9BA346681F1793D600145BD4 /* Assets.xcassets in Resources */,
 				9BA346661F1793D600145BD4 /* Main.storyboard in Resources */,
@@ -433,6 +439,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2Z7R9FQBNN;
 				INFOPLIST_FILE = Todoro/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fespinozacast.Todoro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -447,6 +454,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2Z7R9FQBNN;
 				INFOPLIST_FILE = Todoro/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fespinozacast.Todoro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -536,6 +544,7 @@
 				9BA346871F1793D800145BD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9BA346881F1793D800145BD4 /* Build configuration list for PBXNativeTarget "TodoroTests" */ = {
 			isa = XCConfigurationList;
@@ -544,6 +553,7 @@
 				9BA3468A1F1793D800145BD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9BA3468B1F1793D800145BD4 /* Build configuration list for PBXNativeTarget "TodoroUITests" */ = {
 			isa = XCConfigurationList;
@@ -552,6 +562,7 @@
 				9BA3468D1F1793D800145BD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

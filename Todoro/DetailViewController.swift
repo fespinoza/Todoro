@@ -8,6 +8,7 @@
 
 import UIKit
 import AVKit
+import AudioToolbox
 
 class DetailViewController: UIViewController {
   private struct Default {
@@ -362,6 +363,8 @@ class DetailViewController: UIViewController {
       player.currentTime = 0
       player.prepareToPlay()
       player.play()
+      // Vibrate
+      AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
     } catch let error as NSError {
       print(error.localizedDescription)
     } catch {

@@ -25,7 +25,9 @@ class DetailViewController: UIViewController {
     case taskCompleted
   }
 
-  var detailItem: Task?
+  // MARK: - Properties
+
+  var task: Task?
 
   var currentState: State = .waiting {
     didSet { configureView() }
@@ -70,7 +72,7 @@ class DetailViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    if let task = detailItem {
+    if let task = task {
       navigationItem.title = task.title
 
       currentState = task.isCompleted ? .taskCompleted : .waiting
@@ -82,7 +84,7 @@ class DetailViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
 
-    if let task = detailItem {
+    if let task = task {
       pomodoroCount = task.pomodoros?.count ?? 0
     }
   }
@@ -121,7 +123,7 @@ class DetailViewController: UIViewController {
   }
 
   @IBAction func markTaskAsCompleted(_ sender: Any) {
-    detailItem?.isCompleted = true
+    task?.isCompleted = true
     (UIApplication.shared.delegate as? AppDelegate)!.saveContext()
     currentState = .taskCompleted
 
@@ -133,7 +135,7 @@ class DetailViewController: UIViewController {
 
   @IBAction func deleteTask(_ sender: Any) {
     guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-          let task = detailItem else {
+          let task = task else {
       return
     }
 
@@ -217,7 +219,7 @@ class DetailViewController: UIViewController {
 
   func savePomodoro() {
     guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-      let task = detailItem,
+      let task = task,
       let lastTimerTimeInSeconds = lastTimerTimeInSeconds else {
         return
     }

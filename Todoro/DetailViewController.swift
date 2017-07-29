@@ -96,7 +96,7 @@ class DetailViewController: UIViewController {
   }
 
   @IBAction func removeAMinuteToPomodoro(_ sender: Any) {
-    if currentTimeInSeconds >= 1 {
+    if currentTimeInSeconds > Default.oneMinute {
       currentTimeInSeconds -= Default.oneMinute
     }
   }

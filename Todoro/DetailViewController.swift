@@ -33,16 +33,14 @@ class DetailViewController: UIViewController {
     didSet { configureView() }
   }
 
-  // 25 min by default - 30 for testing purposes
-  let defaultPomodoroTimeInSeconds: Double = Default.pomodoroTimerInSeconds
-  var currentTimeInSeconds: Double = Default.pomodoroTimerInSeconds {
+  let defaultPomodoroTimeInSeconds = Default.pomodoroTimerInSeconds
+  let defaultBreakTimeInSeconds = Default.breakTimerInSecords
+  var currentTimeInSeconds = Default.pomodoroTimerInSeconds {
     didSet {
       updateTimerLabel()
     }
   }
   var lastTimerTimeInSeconds: Int?
-  let defaultBreakTimeInSeconds: Double = Default.breakTimerInSecords
-
   var timer: Timer?
   var player = AVAudioPlayer()
 
@@ -69,11 +67,32 @@ class DetailViewController: UIViewController {
 
   // MARK: - View Cycle
 
+  fileprivate func setPomodoroTimeValueInSeconds() {
+    assert(currentState == .waiting)
+
+    if let pomodoros = task?.pomodoros?.allObjects as? [Pomodoro], pomodoros.count > 0 {
+      let lastPomodoro = pomodoros.last!
+      currentTimeInSeconds = Double(lastPomodoro.duration)
+    } else {
+      currentTimeInSeconds = Default.pomodoroTimerInSeconds
+    }
+  }
+
+  fileprivate func setBreakTimeValueInSeconds() {
+    guard let lastTimerTimeInSeconds = lastTimerTimeInSeconds else {
+      preconditionFailure("the last pomodoro never started")
+    }
+
+    currentTimeInSeconds = ceil(Double(lastTimerTimeInSeconds) / 5.0)
+  }
+
   override func viewDidLoad() {
     super.viewDidLoad()
 
     if let task = task {
       navigationItem.title = task.title
+
+      setPomodoroTimeValueInSeconds()
 
       currentState = task.isCompleted ? .taskCompleted : .waiting
     } else {
@@ -114,8 +133,8 @@ class DetailViewController: UIViewController {
 
   @IBAction func cancelPomodoro(_ sender: Any) {
     stopTimer()
-    currentTimeInSeconds = defaultPomodoroTimeInSeconds
     currentState = .waiting
+    setPomodoroTimeValueInSeconds()
   }
   
   @IBAction func finishBreak(_ sender: Any) {
@@ -180,7 +199,7 @@ class DetailViewController: UIViewController {
 
     let breakButton = UIAlertAction(title: "Break", style: .default) { (action) in
       self.currentState = .breakRunning
-      self.currentTimeInSeconds = self.defaultBreakTimeInSeconds
+      self.setBreakTimeValueInSeconds()
       self.startTimer()
     }
     alertController.addAction(breakButton)
@@ -252,7 +271,7 @@ class DetailViewController: UIViewController {
 
     switch currentState {
     case .waiting:
-      currentTimeInSeconds = defaultPomodoroTimeInSeconds
+      setPomodoroTimeValueInSeconds()
       timerLabel.textColor = UIColor.black
       completedPomodorosLabel.textColor = UIColor.black
 

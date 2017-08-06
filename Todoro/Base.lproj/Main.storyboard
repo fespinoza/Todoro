@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13156.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="H1p-Uh-vWS">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13168.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="H1p-Uh-vWS">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13137.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13147.4"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -31,7 +31,7 @@
         <scene sceneID="yUG-lL-AsK">
             <objects>
                 <viewController title="Detail" id="JEX-9P-axG" customClass="DetailViewController" customModule="Todoro" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" id="svH-Pt-448">
+                    <view key="view" contentMode="scaleToFill" id="svH-Pt-448">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -63,8 +63,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="qBM-Mr-pFk">
-                                <rect key="frame" x="0.0" y="258" width="375" height="220"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="qBM-Mr-pFk">
+                                <rect key="frame" x="0.0" y="258" width="375" height="258"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ngq-2O-5mq">
                                         <rect key="frame" x="133" y="0.0" width="109" height="30"/>
@@ -108,6 +108,13 @@
                                             <action selector="deleteTask:" destination="JEX-9P-axG" eventType="touchUpInside" id="smB-3o-3F8"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="raF-TO-Irn">
+                                        <rect key="frame" x="89" y="228" width="197" height="30"/>
+                                        <state key="normal" title="Show completed pomodoros"/>
+                                        <connections>
+                                            <segue destination="6QJ-Hy-NZb" kind="show" identifier="showCompletedPomodoros" id="1kF-M8-lXW"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -139,6 +146,7 @@
                         <outlet property="forcePomodoroCompletionButton" destination="w5Y-22-JYB" id="zTp-VJ-jw5"/>
                         <outlet property="markTaskAsCompletedButton" destination="qHJ-nW-Y1e" id="e5j-xb-VnN"/>
                         <outlet property="removeMinutesButton" destination="7nD-dP-yFo" id="LXv-NG-UH6"/>
+                        <outlet property="showCompletedPomodorosButton" destination="raF-TO-Irn" id="Xk7-cc-OXK"/>
                         <outlet property="startPomodoroButton" destination="Ngq-2O-5mq" id="Vvk-BL-6u6"/>
                         <outlet property="timerLabel" destination="Fov-bf-Hia" id="PZR-Uf-cAJ"/>
                     </connections>
@@ -146,6 +154,63 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="708" y="128.18590704647679"/>
+        </scene>
+        <!--Task Name-->
+        <scene sceneID="tQD-iP-xyO">
+            <objects>
+                <viewController id="6QJ-Hy-NZb" customClass="PomodoroListViewController" customModule="Todoro" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zaG-RL-YGs">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="VxN-zB-imf">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="pomodoroCell" textLabel="AE1-OE-b1o" detailTextLabel="0Yf-VQ-nmc" style="IBUITableViewCellStyleValue1" id="DFh-Dz-iIt">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="DFh-Dz-iIt" id="RZB-WD-DIR">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Pomodoro Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="AE1-OE-b1o">
+                                                    <rect key="frame" x="15" y="12" width="119.5" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Pomodoro Duration" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0Yf-VQ-nmc">
+                                                    <rect key="frame" x="211" y="12" width="149" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="VxN-zB-imf" secondAttribute="bottom" id="IUa-Zq-hpa"/>
+                            <constraint firstItem="VxN-zB-imf" firstAttribute="top" secondItem="oHV-KC-itT" secondAttribute="top" id="JhD-1H-wKQ"/>
+                            <constraint firstItem="VxN-zB-imf" firstAttribute="leading" secondItem="oHV-KC-itT" secondAttribute="leading" id="QLx-Gc-cCe"/>
+                            <constraint firstItem="VxN-zB-imf" firstAttribute="trailing" secondItem="oHV-KC-itT" secondAttribute="trailing" id="Yve-SS-oXA"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="oHV-KC-itT"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Task Name" id="2Oa-PY-8cd" userLabel="Task Name"/>
+                    <connections>
+                        <outlet property="tableView" destination="VxN-zB-imf" id="ktz-Yf-enc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SBO-hF-pO5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1568.8" y="126.38680659670166"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="Nki-YV-4Qg">

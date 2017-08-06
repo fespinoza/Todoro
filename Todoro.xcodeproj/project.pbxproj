@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9B5E763A1F312561002A152C /* PomodoroListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B5E76391F312561002A152C /* PomodoroListViewController.swift */; };
 		9B65ADC01F1D1C28005996B3 /* bell.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B65ADBF1F1D1BD1005996B3 /* bell.mp3 */; };
 		9BA3465C1F1793D600145BD4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA3465B1F1793D600145BD4 /* AppDelegate.swift */; };
 		9BA3465F1F1793D600145BD4 /* Todoro.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9BA3465D1F1793D600145BD4 /* Todoro.xcdatamodeld */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9B5E76391F312561002A152C /* PomodoroListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroListViewController.swift; sourceTree = "<group>"; };
 		9B65ADBF1F1D1BD1005996B3 /* bell.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bell.mp3; sourceTree = "<group>"; };
 		9BA346581F1793D600145BD4 /* Todoro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todoro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BA3465B1F1793D600145BD4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				9BA346601F1793D600145BD4 /* MasterViewController.swift */,
 				9BA346621F1793D600145BD4 /* DetailViewController.swift */,
 				9BA346641F1793D600145BD4 /* Main.storyboard */,
+				9B5E76391F312561002A152C /* PomodoroListViewController.swift */,
 				9BA346671F1793D600145BD4 /* Assets.xcassets */,
 				9BA346691F1793D600145BD4 /* LaunchScreen.storyboard */,
 				9BA3466C1F1793D600145BD4 /* Info.plist */,
@@ -272,6 +275,7 @@
 				9BA3465C1F1793D600145BD4 /* AppDelegate.swift in Sources */,
 				9BA346611F1793D600145BD4 /* MasterViewController.swift in Sources */,
 				9BA346631F1793D600145BD4 /* DetailViewController.swift in Sources */,
+				9B5E763A1F312561002A152C /* PomodoroListViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,6 +10,10 @@ import UIKit
 import AVKit
 import AudioToolbox
 
+private extension String {
+  static let showCompletedPomodoros = "showCompletedPomodoros"
+}
+
 class DetailViewController: UIViewController {
   private struct Default {
     static let oneMinute: Double = 60.0
@@ -28,6 +32,11 @@ class DetailViewController: UIViewController {
   // MARK: - Properties
 
   var task: Task?
+  var sortedPomodoros: [Pomodoro] {
+    return (task?.pomodoros?.allObjects as! [Pomodoro]).sorted(by: { (first, second) -> Bool in
+      return first.completionTime! >= second.completionTime!
+    })
+  }
 
   var currentState: State = .waiting {
     didSet { configureView() }
@@ -64,14 +73,15 @@ class DetailViewController: UIViewController {
   @IBOutlet weak var cancelPomodoroButton: UIButton!
   @IBOutlet weak var markTaskAsCompletedButton: UIButton!
   @IBOutlet weak var deleteTaskButton: UIButton!
-
+  @IBOutlet weak var showCompletedPomodorosButton: UIButton!
+  
   // MARK: - View Cycle
 
   fileprivate func setPomodoroTimeValueInSeconds() {
     assert(currentState == .waiting)
 
-    if let pomodoros = task?.pomodoros?.allObjects as? [Pomodoro], pomodoros.count > 0 {
-      let lastPomodoro = pomodoros.last!
+    if sortedPomodoros.count > 0 {
+      let lastPomodoro = sortedPomodoros.last!
       currentTimeInSeconds = Double(lastPomodoro.duration)
     } else {
       currentTimeInSeconds = Default.pomodoroTimerInSeconds
@@ -90,10 +100,7 @@ class DetailViewController: UIViewController {
     super.viewDidLoad()
 
     if let task = task {
-      navigationItem.title = task.title
-
       setPomodoroTimeValueInSeconds()
-
       currentState = task.isCompleted ? .taskCompleted : .waiting
     } else {
       configureView()
@@ -104,7 +111,15 @@ class DetailViewController: UIViewController {
     super.viewWillAppear(animated)
 
     if let task = task {
+      navigationItem.title = task.title
       pomodoroCount = task.pomodoros?.count ?? 0
+    }
+  }
+
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if segue.identifier == .showCompletedPomodoros, let pomodoroListVC = segue.destination as? PomodoroListViewController {
+      pomodoroListVC.pomodoros = sortedPomodoros
+      pomodoroListVC.task = task
     }
   }
 
@@ -284,6 +299,7 @@ class DetailViewController: UIViewController {
       cancelPomodoroButton.isHidden = true
       markTaskAsCompletedButton.isHidden = false
       deleteTaskButton.isHidden = false
+      showCompletedPomodorosButton.isHidden = false
     case .pomodoroRunning:
       timerLabel.textColor = UIColor.black
       completedPomodorosLabel.textColor = UIColor.black
@@ -297,6 +313,7 @@ class DetailViewController: UIViewController {
       cancelPomodoroButton.isHidden = false
       markTaskAsCompletedButton.isHidden = true
       deleteTaskButton.isHidden = true
+      showCompletedPomodorosButton.isHidden = true
     case .breakRunning:
       addMinutesButton.isHidden = true
       removeMinutesButton.isHidden = true
@@ -307,6 +324,7 @@ class DetailViewController: UIViewController {
       cancelPomodoroButton.isHidden = true
       markTaskAsCompletedButton.isHidden = true
       deleteTaskButton.isHidden = true
+      showCompletedPomodorosButton.isHidden = true
 
       completedPomodorosLabel.text = "You won a break..."
       completedPomodorosLabel.textColor = UIColor.gray
@@ -324,6 +342,7 @@ class DetailViewController: UIViewController {
       cancelPomodoroButton.isHidden = true
       markTaskAsCompletedButton.isHidden = true
       deleteTaskButton.isHidden = false
+      showCompletedPomodorosButton.isHidden = false
     }
   }
 

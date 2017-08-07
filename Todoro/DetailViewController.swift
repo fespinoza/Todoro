@@ -81,7 +81,7 @@ class DetailViewController: UIViewController {
     assert(currentState == .waiting)
 
     if sortedPomodoros.count > 0 {
-      let lastPomodoro = sortedPomodoros.last!
+      let lastPomodoro = sortedPomodoros.first!
       currentTimeInSeconds = Double(lastPomodoro.duration)
     } else {
       currentTimeInSeconds = Default.pomodoroTimerInSeconds

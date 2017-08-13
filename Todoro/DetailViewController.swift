@@ -9,12 +9,13 @@
 import UIKit
 import AVKit
 import AudioToolbox
+import UserNotifications
 
 private extension String {
   static let showCompletedPomodoros = "showCompletedPomodoros"
 }
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController, CountdownTimerDelegate, UNUserNotificationCenterDelegate {
   private struct Default {
     static let oneMinute: Double = 60.0
     static let testTimerInSeconds = oneMinute
@@ -44,13 +45,9 @@ class DetailViewController: UIViewController {
 
   let defaultPomodoroTimeInSeconds = Default.pomodoroTimerInSeconds
   let defaultBreakTimeInSeconds = Default.breakTimerInSecords
-  var currentTimeInSeconds = Default.pomodoroTimerInSeconds {
-    didSet {
-      updateTimerLabel()
-    }
-  }
-  var lastTimerTimeInSeconds: Int?
-  var timer: Timer?
+
+  var lastTimerTimeInSeconds: Double?
+
   var player = AVAudioPlayer()
 
   // temp
@@ -77,27 +74,14 @@ class DetailViewController: UIViewController {
   
   // MARK: - View Cycle
 
-  fileprivate func setPomodoroTimeValueInSeconds() {
-    assert(currentState == .waiting)
-
-    if sortedPomodoros.count > 0 {
-      let lastPomodoro = sortedPomodoros.first!
-      currentTimeInSeconds = Double(lastPomodoro.duration)
-    } else {
-      currentTimeInSeconds = Default.pomodoroTimerInSeconds
-    }
-  }
-
-  fileprivate func setBreakTimeValueInSeconds() {
-    guard let lastTimerTimeInSeconds = lastTimerTimeInSeconds else {
-      preconditionFailure("the last pomodoro never started")
-    }
-
-    currentTimeInSeconds = ceil(Double(lastTimerTimeInSeconds) / 5.0)
-  }
-
   override func viewDidLoad() {
     super.viewDidLoad()
+
+    CountdownTimer.shared.delegate = self
+
+    UNUserNotificationCenter.current().delegate = self
+
+    print("DetailsViewController", #function)
 
     if let task = task {
       setPomodoroTimeValueInSeconds()
@@ -109,6 +93,8 @@ class DetailViewController: UIViewController {
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
+
+    print("DetailsViewController", #function)
 
     if let task = task {
       navigationItem.title = task.title
@@ -126,28 +112,25 @@ class DetailViewController: UIViewController {
   // MARK: - IBActions
 
   @IBAction func addAMinuteToPomodoro(_ sender: Any) {
-    currentTimeInSeconds += Default.oneMinute
+    CountdownTimer.shared.increaseTimeLeft(bySeconds: Default.oneMinute)
   }
 
   @IBAction func removeAMinuteToPomodoro(_ sender: Any) {
-    if currentTimeInSeconds > Default.oneMinute {
-      currentTimeInSeconds -= Default.oneMinute
-    }
+    CountdownTimer.shared.decreaseTimeLeft(bySeconds: Default.oneMinute)
   }
 
   @IBAction func startPomodoro(_ sender: Any) {
     currentState = .pomodoroRunning
-    lastTimerTimeInSeconds = Int(currentTimeInSeconds)
-    startTimer()
+    lastTimerTimeInSeconds = CountdownTimer.shared.timeLeftInSeconds
+    CountdownTimer.shared.startTimer()
   }
 
   @IBAction func forcePomodoroCompletion(_ sender: Any) {
-    stopTimer()
-    completePomodoro()
+    CountdownTimer.shared.stopTimer()
   }
 
   @IBAction func cancelPomodoro(_ sender: Any) {
-    stopTimer()
+    CountdownTimer.shared.cancelTimer()
     currentState = .waiting
     setPomodoroTimeValueInSeconds()
   }
@@ -192,12 +175,31 @@ class DetailViewController: UIViewController {
 
   // MARK: - Business Logic
 
+  fileprivate func setPomodoroTimeValueInSeconds() {
+    assert(currentState == .waiting)
+
+    if sortedPomodoros.count > 0 {
+      let lastPomodoro = sortedPomodoros.first!
+      CountdownTimer.shared.prepare(forCountdownInSeconds: Double(lastPomodoro.duration))
+    } else {
+      CountdownTimer.shared.prepare(forCountdownInSeconds: Default.pomodoroTimerInSeconds)
+    }
+  }
+
+  fileprivate func setBreakTimeValueInSeconds() {
+    guard let lastTimerTimeInSeconds = lastTimerTimeInSeconds else {
+      preconditionFailure("the last pomodoro never started")
+    }
+
+    CountdownTimer.shared.prepare(forCountdownInSeconds: ceil(Double(lastTimerTimeInSeconds) / 5.0))
+  }
+
   fileprivate func numberOfMinutes() -> Double {
-    return floor(currentTimeInSeconds / Default.oneMinute)
+    return floor(CountdownTimer.shared.timeLeftInSeconds / Default.oneMinute)
   }
 
   fileprivate func numberOfSeconds() -> Double {
-    return currentTimeInSeconds.truncatingRemainder(dividingBy: Default.oneMinute)
+    return CountdownTimer.shared.timeLeftInSeconds.truncatingRemainder(dividingBy: Default.oneMinute)
   }
 
   fileprivate func completePomodoro() {
@@ -215,7 +217,7 @@ class DetailViewController: UIViewController {
     let breakButton = UIAlertAction(title: "Break", style: .default) { (action) in
       self.currentState = .breakRunning
       self.setBreakTimeValueInSeconds()
-      self.startTimer()
+      CountdownTimer.shared.startTimer()
     }
     alertController.addAction(breakButton)
 
@@ -238,8 +240,11 @@ class DetailViewController: UIViewController {
 
     let newPomodoroButton = UIAlertAction(title: "Sure", style: .default) { (action) in
       self.currentState = .pomodoroRunning
-      self.currentTimeInSeconds = Double(self.lastTimerTimeInSeconds!)
-      self.startTimer()
+      guard let lastTimerTimeInSeconds = self.lastTimerTimeInSeconds else {
+        preconditionFailure("this should have been populated")
+      }
+      CountdownTimer.shared.prepare(forCountdownInSeconds: lastTimerTimeInSeconds)
+      CountdownTimer.shared.startTimer()
     }
     alertController.addAction(newPomodoroButton)
 
@@ -355,37 +360,29 @@ class DetailViewController: UIViewController {
     }
   }
 
+  // TODO: what happens when pomodoro finishes on background
+
   fileprivate func updateTimerLabel() {
     let minutes = Int(numberOfMinutes())
     let seconds = Int(numberOfSeconds())
     let secondsText = String(format: "%02d", seconds)
 
-    timerLabel.text = "\(minutes):\(secondsText)"
-  }
-
-  // MARK: - Timer
-
-  fileprivate func startTimer() {
-    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
-      self.timerUpdate()
+    DispatchQueue.main.async {
+      self.timerLabel.text = "\(minutes):\(secondsText)"
     }
   }
 
-  fileprivate func timerUpdate() {
-    currentTimeInSeconds -= 1
-    if currentTimeInSeconds == 0 {
-      stopTimer()
-      if currentState == .pomodoroRunning {
-        completePomodoro()
-      } else {
-        completeBreak()
-      }
-    }
+  // MARK: - CountdownTimerDelegate
+
+  func timeUpdated() {
+    updateTimerLabel()
   }
 
-  fileprivate func stopTimer() {
-    if let timer = timer {
-      timer.invalidate()
+  func timerDidStop() {
+    if currentState == .pomodoroRunning {
+      completePomodoro()
+    } else {
+      completeBreak()
     }
   }
 

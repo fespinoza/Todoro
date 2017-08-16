@@ -15,7 +15,7 @@ private extension String {
   static let showCompletedPomodoros = "showCompletedPomodoros"
 }
 
-class DetailViewController: UIViewController, CountdownTimerDelegate, UNUserNotificationCenterDelegate {
+class DetailViewController: UIViewController, CountdownTimerDelegate {
   private struct Default {
     static let oneMinute: Double = 60.0
     static let testTimerInSeconds = oneMinute
@@ -79,8 +79,6 @@ class DetailViewController: UIViewController, CountdownTimerDelegate, UNUserNoti
 
     CountdownTimer.shared.delegate = self
 
-    UNUserNotificationCenter.current().delegate = self
-
     print("DetailsViewController", #function)
 
     if let task = task {
@@ -89,6 +87,26 @@ class DetailViewController: UIViewController, CountdownTimerDelegate, UNUserNoti
     } else {
       configureView()
     }
+
+    let app = UIApplication.shared
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.applicationWillResignActive(notification:)),
+      name: NSNotification.Name.UIApplicationWillResignActive,
+      object: app
+    )
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.applicationWillBecomeActive(notification:)),
+      name: NSNotification.Name.UIApplicationDidBecomeActive,
+      object: app
+    )
+  }
+
+  deinit {
+    NotificationCenter.default.removeObserver(self)
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -408,4 +426,15 @@ class DetailViewController: UIViewController, CountdownTimerDelegate, UNUserNoti
       print("AVAudioPlayer init failed")
     }
   }
+
+  // MARK: - Observers
+
+  @objc func applicationWillResignActive(notification: Any) {
+    print(#function)
+  }
+
+  @objc func applicationWillBecomeActive(notification: Any) {
+    print(#function)
+  }
+
 }

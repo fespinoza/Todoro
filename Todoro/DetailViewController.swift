@@ -431,10 +431,62 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
 
   @objc func applicationWillResignActive(notification: Any) {
     print(#function)
+    // when app goes to background:
+    //  - schedule local notification
+    //    - break or pomodoro?
+    //  - if pomodoro
+    //    - store pomodoro completion for task in "UserDefaults"
+    //
+    print("")
+    print(#function)
+    print("scheduling local notifications")
+
+    guard CountdownTimer.shared.isActive else {
+      return
+    }
+
+    let content = UNMutableNotificationContent()
+    content.title = "Pomodoro Done"
+    content.body = "Good job"
+
+    content.sound = UNNotificationSound.default()
+    let date = Date(timeIntervalSinceNow: CountdownTimer.shared.timeLeftInSeconds)
+    let triggerDate = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: date)
+    let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
+
+    // Schedule the notification.
+    let request = UNNotificationRequest(identifier: "pomodoro", content: content, trigger: trigger)
+    let center = UNUserNotificationCenter.current()
+    center.add(request, withCompletionHandler: nil)
   }
 
   @objc func applicationWillBecomeActive(notification: Any) {
     print(#function)
+    // when the app goes to foreground
+    //   Are there local notifications to be triggered?
+    //     if so,
+    //        cancel the local notification
+    //        restore the timer with the remaining time
+    //        remove the pending pomodoro completion for task in "UserDefaults"
+    //        restore "break" or "pomodoro" mode.
+    //   Are there pending completions for a pomodoro?
+    //      if so, (it should be max there just 1)
+    //        cancel the local timer
+    //        execute the savePomodoro routine
+    UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
+      assert(notificationRequests.count == 0 || notificationRequests.count == 1)
+
+      notificationRequests.forEach({ (notification) in
+        let trigger = notification.trigger as? UNCalendarNotificationTrigger
+        if let trigger = trigger, let notificationDate = trigger.nextTriggerDate() {
+          let secondsLeft = notificationDate.timeIntervalSinceNow
+          CountdownTimer.shared.prepare(forCountdownInSeconds: secondsLeft)
+          CountdownTimer.shared.startTimer()
+        }
+      })
+    }
+
+    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["pomodoro"])
   }
 
 }

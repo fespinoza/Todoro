@@ -26,7 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     let controller = masterNavigationController.topViewController as! MasterViewController
     controller.managedObjectContext = self.persistentContainer.viewContext
 
-//    application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
     let notificationCenter = UNUserNotificationCenter.current()
     notificationCenter.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
       if granted {
@@ -45,27 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     // and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks.
     // Games should use this method to pause the game.
-    print("")
-    print(#function)
-    print("scheduling local notifications")
-
-    guard CountdownTimer.shared.isActive else {
-      return
-    }
-
-    let content = UNMutableNotificationContent()
-    content.title = "Pomodoro Done"
-    content.body = "Good job"
-
-    content.sound = UNNotificationSound.default()
-    let date = Date(timeIntervalSinceNow: CountdownTimer.shared.timeLeftInSeconds)
-    let triggerDate = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: date)
-    let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
-
-    // Schedule the notification.
-    let request = UNNotificationRequest(identifier: "pomodoro", content: content, trigger: trigger)
-    let center = UNUserNotificationCenter.current()
-    center.add(request, withCompletionHandler: nil)
   }
 
   func applicationDidEnterBackground(_ application: UIApplication) {
@@ -85,19 +63,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     // Restart any tasks that were paused (or not yet started) while the application was inactive.
     // If the application was previously in the background, optionally refresh the user interface.
     application.isIdleTimerDisabled = true
-
-    UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
-      notificationRequests.forEach({ (notification) in
-        let trigger = notification.trigger as? UNCalendarNotificationTrigger
-        if let trigger = trigger, let notificationDate = trigger.nextTriggerDate() {
-          let secondsLeft = notificationDate.timeIntervalSinceNow
-          CountdownTimer.shared.prepare(forCountdownInSeconds: secondsLeft)
-          CountdownTimer.shared.startTimer()
-        }
-      })
-    }
-
-    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["pomodoro"])
   }
 
   func applicationWillTerminate(_ application: UIApplication) {
@@ -171,6 +136,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
       }
     }
   }
-
 }
 

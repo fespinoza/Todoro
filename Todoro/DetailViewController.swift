@@ -465,12 +465,21 @@ class DetailViewController: UIViewController {
     print(#function, "scheduling local notifications")
 
     let content = UNMutableNotificationContent()
-    content.title = "Pomodoro Done"
-    content.body = "Good job"
+
+    switch currentState {
+    case .pomodoroRunning:
+      content.title = "Pomodoro Done"
+      content.body = "Good job"
+    case .breakRunning:
+      content.title = "Break Done"
+      content.body = "Let's back to work"
+    default:
+      preconditionFailure("i should not try to schedule a notification for no timer")
+    }
 
     content.sound = UNNotificationSound.default()
     let date = Date(timeIntervalSinceNow: currentTimeInSeconds)
-    let triggerDate = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: date)
+    let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
     let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
 
     // Schedule the notification.

@@ -15,7 +15,7 @@ private extension String {
   static let showCompletedPomodoros = "showCompletedPomodoros"
 }
 
-class DetailViewController: UIViewController, CountdownTimerDelegate {
+class DetailViewController: UIViewController {
   private struct Default {
     static let oneMinute: Double = 60.0
     static let testTimerInSeconds = oneMinute
@@ -45,6 +45,13 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
 
   let defaultPomodoroTimeInSeconds = Default.pomodoroTimerInSeconds
   let defaultBreakTimeInSeconds = Default.breakTimerInSecords
+
+  var currentTimeInSeconds: Double = Default.pomodoroTimerInSeconds {
+    didSet {
+      self.updateTimerLabel()
+    }
+  }
+  var timer: Timer?
 
   var lastTimerTimeInSeconds: Double?
 
@@ -76,10 +83,6 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-
-    CountdownTimer.shared.delegate = self
-
-    print("DetailsViewController", #function)
 
     if let task = task {
       setPomodoroTimeValueInSeconds()
@@ -130,25 +133,27 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
   // MARK: - IBActions
 
   @IBAction func addAMinuteToPomodoro(_ sender: Any) {
-    CountdownTimer.shared.increaseTimeLeft(bySeconds: Default.oneMinute)
+    currentTimeInSeconds += Default.oneMinute
   }
 
   @IBAction func removeAMinuteToPomodoro(_ sender: Any) {
-    CountdownTimer.shared.decreaseTimeLeft(bySeconds: Default.oneMinute)
+    if currentTimeInSeconds - Default.oneMinute > 0 {
+      currentTimeInSeconds -= Default.oneMinute
+    }
   }
 
   @IBAction func startPomodoro(_ sender: Any) {
     currentState = .pomodoroRunning
-    lastTimerTimeInSeconds = CountdownTimer.shared.timeLeftInSeconds
-    CountdownTimer.shared.startTimer()
+    lastTimerTimeInSeconds = currentTimeInSeconds
+    startTimer()
   }
 
   @IBAction func forcePomodoroCompletion(_ sender: Any) {
-    CountdownTimer.shared.stopTimer()
+    stopTimer()
   }
 
   @IBAction func cancelPomodoro(_ sender: Any) {
-    CountdownTimer.shared.cancelTimer()
+    stopTimer()
     currentState = .waiting
     setPomodoroTimeValueInSeconds()
   }
@@ -174,7 +179,11 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
       return
     }
 
-    let alertController = UIAlertController(title: "Deleting Task", message: "Are you sure you want to delete the task?", preferredStyle: .alert)
+    let alertController = UIAlertController(
+      title: "Deleting Task",
+      message: "Are you sure you want to delete the task?",
+      preferredStyle: .alert
+    )
     alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
       let context = appDelegate.persistentContainer.viewContext
 
@@ -198,9 +207,9 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
 
     if sortedPomodoros.count > 0 {
       let lastPomodoro = sortedPomodoros.first!
-      CountdownTimer.shared.prepare(forCountdownInSeconds: Double(lastPomodoro.duration))
+      currentTimeInSeconds = Double(lastPomodoro.duration)
     } else {
-      CountdownTimer.shared.prepare(forCountdownInSeconds: Default.pomodoroTimerInSeconds)
+      currentTimeInSeconds = Default.pomodoroTimerInSeconds
     }
   }
 
@@ -209,15 +218,15 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
       preconditionFailure("the last pomodoro never started")
     }
 
-    CountdownTimer.shared.prepare(forCountdownInSeconds: ceil(Double(lastTimerTimeInSeconds) / 5.0))
+    currentTimeInSeconds = ceil(Double(lastTimerTimeInSeconds) / 5.0)
   }
 
   fileprivate func numberOfMinutes() -> Double {
-    return floor(CountdownTimer.shared.timeLeftInSeconds / Default.oneMinute)
+    return floor(currentTimeInSeconds / Default.oneMinute)
   }
 
   fileprivate func numberOfSeconds() -> Double {
-    return CountdownTimer.shared.timeLeftInSeconds.truncatingRemainder(dividingBy: Default.oneMinute)
+    return currentTimeInSeconds.truncatingRemainder(dividingBy: Default.oneMinute)
   }
 
   fileprivate func completePomodoro() {
@@ -235,7 +244,7 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
     let breakButton = UIAlertAction(title: "Break", style: .default) { (action) in
       self.currentState = .breakRunning
       self.setBreakTimeValueInSeconds()
-      CountdownTimer.shared.startTimer()
+      self.startTimer()
     }
     alertController.addAction(breakButton)
 
@@ -261,8 +270,8 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
       guard let lastTimerTimeInSeconds = self.lastTimerTimeInSeconds else {
         preconditionFailure("this should have been populated")
       }
-      CountdownTimer.shared.prepare(forCountdownInSeconds: lastTimerTimeInSeconds)
-      CountdownTimer.shared.startTimer()
+      self.currentTimeInSeconds = lastTimerTimeInSeconds
+      self.startTimer()
     }
     alertController.addAction(newPomodoroButton)
 
@@ -390,6 +399,32 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
     }
   }
 
+  // MARK: - Timer
+
+  fileprivate func startTimer() {
+    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
+      self.timerUpdate()
+    }
+  }
+
+  fileprivate func timerUpdate() {
+    currentTimeInSeconds -= 1
+    if currentTimeInSeconds == 0 {
+      stopTimer()
+      if currentState == .pomodoroRunning {
+        completePomodoro()
+      } else {
+        completeBreak()
+      }
+    }
+  }
+
+  fileprivate func stopTimer() {
+    if let timer = timer {
+      timer.invalidate()
+    }
+  }
+
   // MARK: - CountdownTimerDelegate
 
   func timeUpdated() {
@@ -430,7 +465,6 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
   // MARK: - Observers
 
   @objc func applicationWillResignActive(notification: Any) {
-    print(#function)
     // when app goes to background:
     //  - schedule local notification
     //    - break or pomodoro?
@@ -438,19 +472,14 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
     //    - store pomodoro completion for task in "UserDefaults"
     //
     print("")
-    print(#function)
-    print("scheduling local notifications")
-
-    guard CountdownTimer.shared.isActive else {
-      return
-    }
+    print(#function, "scheduling local notifications")
 
     let content = UNMutableNotificationContent()
     content.title = "Pomodoro Done"
     content.body = "Good job"
 
     content.sound = UNNotificationSound.default()
-    let date = Date(timeIntervalSinceNow: CountdownTimer.shared.timeLeftInSeconds)
+    let date = Date(timeIntervalSinceNow: currentTimeInSeconds)
     let triggerDate = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: date)
     let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
 
@@ -480,8 +509,8 @@ class DetailViewController: UIViewController, CountdownTimerDelegate {
         let trigger = notification.trigger as? UNCalendarNotificationTrigger
         if let trigger = trigger, let notificationDate = trigger.nextTriggerDate() {
           let secondsLeft = notificationDate.timeIntervalSinceNow
-          CountdownTimer.shared.prepare(forCountdownInSeconds: secondsLeft)
-          CountdownTimer.shared.startTimer()
+          self.currentTimeInSeconds = secondsLeft
+          self.startTimer()
         }
       })
     }

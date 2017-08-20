@@ -425,20 +425,6 @@ class DetailViewController: UIViewController {
     }
   }
 
-  // MARK: - CountdownTimerDelegate
-
-  func timeUpdated() {
-    updateTimerLabel()
-  }
-
-  func timerDidStop() {
-    if currentState == .pomodoroRunning {
-      completePomodoro()
-    } else {
-      completeBreak()
-    }
-  }
-
   // MARK: - Sounds
 
   fileprivate func playBell() {
@@ -471,6 +457,10 @@ class DetailViewController: UIViewController {
     //  - if pomodoro
     //    - store pomodoro completion for task in "UserDefaults"
     //
+    guard timer != nil else {
+      return
+    }
+
     print("")
     print(#function, "scheduling local notifications")
 

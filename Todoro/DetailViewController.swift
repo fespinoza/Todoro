@@ -13,6 +13,9 @@ import UserNotifications
 
 private extension String {
   static let showCompletedPomodoros = "showCompletedPomodoros"
+  static let lastTimerTimeInSecondsKey = "lastTimerTimeInSecondsKey"
+  static let taskIDKey = "taskIDKey"
+  static let timerStateKey = "timerStateKey"
 }
 
 class DetailViewController: UIViewController {
@@ -23,7 +26,7 @@ class DetailViewController: UIViewController {
     static let breakTimerInSecords = 5 * oneMinute
   }
 
-  enum State {
+  enum State: String {
     case waiting
     case pomodoroRunning
     case breakRunning
@@ -175,8 +178,8 @@ class DetailViewController: UIViewController {
 
   @IBAction func deleteTask(_ sender: Any) {
     guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-          let task = task else {
-      return
+      let task = task else {
+        return
     }
 
     let alertController = UIAlertController(
@@ -402,6 +405,9 @@ class DetailViewController: UIViewController {
   // MARK: - Timer
 
   fileprivate func startTimer() {
+    print(#function)
+    assert(timer == nil)
+
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
       self.timerUpdate()
     }
@@ -409,7 +415,7 @@ class DetailViewController: UIViewController {
 
   fileprivate func timerUpdate() {
     currentTimeInSeconds -= 1
-    if currentTimeInSeconds == 0 {
+    if Int(currentTimeInSeconds) == 0 {
       stopTimer()
       if currentState == .pomodoroRunning {
         completePomodoro()
@@ -420,9 +426,11 @@ class DetailViewController: UIViewController {
   }
 
   fileprivate func stopTimer() {
+    print(#function)
     if let timer = timer {
       timer.invalidate()
     }
+    timer = nil
   }
 
   // MARK: - Sounds
@@ -456,7 +464,6 @@ class DetailViewController: UIViewController {
     //    - break or pomodoro?
     //  - if pomodoro
     //    - store pomodoro completion for task in "UserDefaults"
-    //
     guard timer != nil else {
       return
     }
@@ -470,6 +477,9 @@ class DetailViewController: UIViewController {
     case .pomodoroRunning:
       content.title = "Pomodoro Done"
       content.body = "Good job"
+
+      temporarilySavePomodoroForBackground()
+
     case .breakRunning:
       content.title = "Break Done"
       content.body = "Let's back to work"
@@ -504,17 +514,78 @@ class DetailViewController: UIViewController {
     UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
       assert(notificationRequests.count == 0 || notificationRequests.count == 1)
 
-      notificationRequests.forEach({ (notification) in
-        let trigger = notification.trigger as? UNCalendarNotificationTrigger
-        if let trigger = trigger, let notificationDate = trigger.nextTriggerDate() {
-          let secondsLeft = notificationDate.timeIntervalSinceNow
-          self.currentTimeInSeconds = secondsLeft
-          self.startTimer()
-        }
-      })
+      if notificationRequests.count == 0 {
+        self.checkForBackgroundSavedPomodoros()
+      } else {
+        self.cancelPendingTimerNotifications(withRequests: notificationRequests)
+      }
     }
 
     UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["pomodoro"])
   }
 
+  fileprivate func checkForBackgroundSavedPomodoros() {
+    guard let tempSavedPomodoroData = temporarilySavedPomodorValue() else {
+      return
+    }
+
+    assert(self.task != nil)
+
+    DispatchQueue.main.async {
+      print("saved pomodoro")
+      self.stopTimer()
+      self.lastTimerTimeInSeconds = tempSavedPomodoroData.remainingTime
+      self.savePomodoro()
+      self.pomodoroCount += 1
+      self.currentState = .waiting
+      self.cleanTemporarilySavedPomodoro()
+    }
+  }
+
+  fileprivate func cancelPendingTimerNotifications(withRequests notificationRequests: [UNNotificationRequest]) {
+    print("cancel pending notifications")
+    notificationRequests.forEach({ (notification) in
+      let trigger = notification.trigger as? UNCalendarNotificationTrigger
+      if let trigger = trigger, let notificationDate = trigger.nextTriggerDate() {
+        DispatchQueue.main.async {
+          self.stopTimer()
+          let secondsLeft = notificationDate.timeIntervalSinceNow
+          self.currentTimeInSeconds = secondsLeft
+          self.startTimer()
+        }
+        self.cleanTemporarilySavedPomodoro()
+      }
+    })
+  }
+
+  // MARK: - UserData temporal pomodoro storage
+
+  fileprivate func temporarilySavedPomodorValue() -> (remainingTime: Double, taskID: String, currentState: String)? {
+    let _currentTimeInSeconds = UserDefaults.standard.double(forKey: .lastTimerTimeInSecondsKey)
+
+    guard let _timerState = UserDefaults.standard.string(forKey: .timerStateKey),
+      let _taskID = UserDefaults.standard.string(forKey: .taskIDKey) else {
+        print("no pomodoros completed")
+        return nil
+    }
+
+    return (remainingTime: _currentTimeInSeconds, taskID: _taskID, currentState: _timerState)
+  }
+
+  // when the app goes to background I save the current pomodoro in a temporary way, so then when the app is active
+  // again, the app will see if the pomodoro finished while the app was in background or not
+  fileprivate func temporarilySavePomodoroForBackground() {
+    guard let taskID = task?.id else {
+      preconditionFailure("this value should be set if i am doing this")
+    }
+    UserDefaults.standard.set(lastTimerTimeInSeconds, forKey: .lastTimerTimeInSecondsKey)
+    UserDefaults.standard.set(taskID, forKey: .taskIDKey)
+    UserDefaults.standard.set(currentState.rawValue, forKey: .timerStateKey)
+  }
+
+  fileprivate func cleanTemporarilySavedPomodoro() {
+    UserDefaults.standard.removeObject(forKey: .lastTimerTimeInSecondsKey)
+    UserDefaults.standard.removeObject(forKey: .taskIDKey)
+    UserDefaults.standard.removeObject(forKey: .timerStateKey)
+  }
 }

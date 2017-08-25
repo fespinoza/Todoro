@@ -10,8 +10,8 @@ import UIKit
 import CoreData
 
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
-  var detailViewController: DetailViewController? = nil
-  var managedObjectContext: NSManagedObjectContext? = nil
+  var detailViewController: DetailViewController?
+  var managedObjectContext: NSManagedObjectContext?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -49,7 +49,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
       textField.placeholder = "Task name"
     }
 
-    alertController.addAction(UIAlertAction(title: "Create", style: .default) { (action) in
+    alertController.addAction(UIAlertAction(title: "Create", style: .default) { (_) in
       if let title = alertController.textFields?.first?.text {
         self.insertNewObject(taskTitle: title)
       }
@@ -186,8 +186,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
 
     return _fetchedResultsController!
-  }    
-  var _fetchedResultsController: NSFetchedResultsController<Task>? = nil
+  }
+  var _fetchedResultsController: NSFetchedResultsController<Task>?
 
   func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
     tableView.beginUpdates()
@@ -232,4 +232,3 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
    */
 
 }
-

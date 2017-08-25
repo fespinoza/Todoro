@@ -81,7 +81,7 @@ class DetailViewController: UIViewController {
   @IBOutlet weak var markTaskAsCompletedButton: UIButton!
   @IBOutlet weak var deleteTaskButton: UIButton!
   @IBOutlet weak var showCompletedPomodorosButton: UIButton!
-  
+
   // MARK: - View Cycle
 
   override func viewDidLoad() {
@@ -165,7 +165,7 @@ class DetailViewController: UIViewController {
     currentState = .waiting
     setPomodoroTimeValueInSeconds()
   }
-  
+
   @IBAction func finishBreak(_ sender: Any) {
     cancelPomodoro(sender)
   }
@@ -249,14 +249,14 @@ class DetailViewController: UIViewController {
       preferredStyle: .alert
     )
 
-    let breakButton = UIAlertAction(title: "Break", style: .default) { (action) in
+    let breakButton = UIAlertAction(title: "Break", style: .default) { (_) in
       self.currentState = .breakRunning
       self.setBreakTimeValueInSeconds()
       self.startTimer()
     }
     alertController.addAction(breakButton)
 
-    let cancelButton = UIAlertAction(title: "Done", style: .cancel) { (action) in
+    let cancelButton = UIAlertAction(title: "Done", style: .cancel) { (_) in
       self.currentState = .waiting
     }
     alertController.addAction(cancelButton)
@@ -273,7 +273,7 @@ class DetailViewController: UIViewController {
       preferredStyle: .alert
     )
 
-    let newPomodoroButton = UIAlertAction(title: "Sure", style: .default) { (action) in
+    let newPomodoroButton = UIAlertAction(title: "Sure", style: .default) { (_) in
       self.currentState = .pomodoroRunning
       guard let lastTimerTimeInSeconds = self.lastTimerTimeInSeconds else {
         preconditionFailure("this should have been populated")
@@ -283,7 +283,7 @@ class DetailViewController: UIViewController {
     }
     alertController.addAction(newPomodoroButton)
 
-    let cancelButton = UIAlertAction(title: "Done", style: .cancel) { (action) in
+    let cancelButton = UIAlertAction(title: "Done", style: .cancel) { (_) in
       self.currentState = .waiting
     }
     alertController.addAction(cancelButton)

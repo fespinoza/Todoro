@@ -76,8 +76,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
   func splitViewController(
     _ splitViewController: UISplitViewController,
-    collapseSecondary secondaryViewController:UIViewController,
-    onto primaryViewController:UIViewController
+    collapseSecondary secondaryViewController: UIViewController,
+    onto primaryViewController: UIViewController
   ) -> Bool {
     guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
     guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else {
@@ -100,7 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
      error conditions that could cause the creation of the store to fail.
      */
     let container = NSPersistentContainer(name: "Todoro")
-    container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+    container.loadPersistentStores(completionHandler: { (_, error) in
       if let error = error as NSError? {
         // Replace this implementation with code to handle the error appropriately.
         // fatalError() causes the application to generate a crash log and terminate.
@@ -137,4 +137,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }
   }
 }
-

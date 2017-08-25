@@ -9,9 +9,13 @@
 import UIKit
 import AVKit
 import AudioToolbox
+import UserNotifications
 
 private extension String {
   static let showCompletedPomodoros = "showCompletedPomodoros"
+  static let lastTimerTimeInSecondsKey = "lastTimerTimeInSecondsKey"
+  static let taskIDKey = "taskIDKey"
+  static let timerStateKey = "timerStateKey"
 }
 
 class DetailViewController: UIViewController {
@@ -22,7 +26,7 @@ class DetailViewController: UIViewController {
     static let breakTimerInSecords = 5 * oneMinute
   }
 
-  enum State {
+  enum State: String {
     case waiting
     case pomodoroRunning
     case breakRunning
@@ -44,13 +48,16 @@ class DetailViewController: UIViewController {
 
   let defaultPomodoroTimeInSeconds = Default.pomodoroTimerInSeconds
   let defaultBreakTimeInSeconds = Default.breakTimerInSecords
-  var currentTimeInSeconds = Default.pomodoroTimerInSeconds {
+
+  var currentTimeInSeconds: Double = Default.pomodoroTimerInSeconds {
     didSet {
-      updateTimerLabel()
+      self.updateTimerLabel()
     }
   }
-  var lastTimerTimeInSeconds: Int?
   var timer: Timer?
+
+  var lastTimerTimeInSeconds: Double?
+
   var player = AVAudioPlayer()
 
   // temp
@@ -77,25 +84,6 @@ class DetailViewController: UIViewController {
   
   // MARK: - View Cycle
 
-  fileprivate func setPomodoroTimeValueInSeconds() {
-    assert(currentState == .waiting)
-
-    if sortedPomodoros.count > 0 {
-      let lastPomodoro = sortedPomodoros.first!
-      currentTimeInSeconds = Double(lastPomodoro.duration)
-    } else {
-      currentTimeInSeconds = Default.pomodoroTimerInSeconds
-    }
-  }
-
-  fileprivate func setBreakTimeValueInSeconds() {
-    guard let lastTimerTimeInSeconds = lastTimerTimeInSeconds else {
-      preconditionFailure("the last pomodoro never started")
-    }
-
-    currentTimeInSeconds = ceil(Double(lastTimerTimeInSeconds) / 5.0)
-  }
-
   override func viewDidLoad() {
     super.viewDidLoad()
 
@@ -105,6 +93,33 @@ class DetailViewController: UIViewController {
     } else {
       configureView()
     }
+
+    let app = UIApplication.shared
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.applicationWillResignActive(notification:)),
+      name: NSNotification.Name.UIApplicationWillResignActive,
+      object: app
+    )
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.applicationWillBecomeActive(notification:)),
+      name: NSNotification.Name.UIApplicationDidBecomeActive,
+      object: app
+    )
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.applicationWillTerminate(notification:)),
+      name: NSNotification.Name.UIApplicationWillTerminate,
+      object: app
+    )
+  }
+
+  deinit {
+    NotificationCenter.default.removeObserver(self)
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -130,20 +145,19 @@ class DetailViewController: UIViewController {
   }
 
   @IBAction func removeAMinuteToPomodoro(_ sender: Any) {
-    if currentTimeInSeconds > Default.oneMinute {
+    if currentTimeInSeconds - Default.oneMinute > 0 {
       currentTimeInSeconds -= Default.oneMinute
     }
   }
 
   @IBAction func startPomodoro(_ sender: Any) {
     currentState = .pomodoroRunning
-    lastTimerTimeInSeconds = Int(currentTimeInSeconds)
+    lastTimerTimeInSeconds = currentTimeInSeconds
     startTimer()
   }
 
   @IBAction func forcePomodoroCompletion(_ sender: Any) {
     stopTimer()
-    completePomodoro()
   }
 
   @IBAction func cancelPomodoro(_ sender: Any) {
@@ -169,11 +183,15 @@ class DetailViewController: UIViewController {
 
   @IBAction func deleteTask(_ sender: Any) {
     guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-          let task = task else {
-      return
+      let task = task else {
+        return
     }
 
-    let alertController = UIAlertController(title: "Deleting Task", message: "Are you sure you want to delete the task?", preferredStyle: .alert)
+    let alertController = UIAlertController(
+      title: "Deleting Task",
+      message: "Are you sure you want to delete the task?",
+      preferredStyle: .alert
+    )
     alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
       let context = appDelegate.persistentContainer.viewContext
 
@@ -191,6 +209,25 @@ class DetailViewController: UIViewController {
   }
 
   // MARK: - Business Logic
+
+  fileprivate func setPomodoroTimeValueInSeconds() {
+    assert(currentState == .waiting)
+
+    if sortedPomodoros.count > 0 {
+      let lastPomodoro = sortedPomodoros.first!
+      currentTimeInSeconds = Double(lastPomodoro.duration)
+    } else {
+      currentTimeInSeconds = Default.pomodoroTimerInSeconds
+    }
+  }
+
+  fileprivate func setBreakTimeValueInSeconds() {
+    guard let lastTimerTimeInSeconds = lastTimerTimeInSeconds else {
+      preconditionFailure("the last pomodoro never started")
+    }
+
+    currentTimeInSeconds = ceil(Double(lastTimerTimeInSeconds) / 5.0)
+  }
 
   fileprivate func numberOfMinutes() -> Double {
     return floor(currentTimeInSeconds / Default.oneMinute)
@@ -238,7 +275,10 @@ class DetailViewController: UIViewController {
 
     let newPomodoroButton = UIAlertAction(title: "Sure", style: .default) { (action) in
       self.currentState = .pomodoroRunning
-      self.currentTimeInSeconds = Double(self.lastTimerTimeInSeconds!)
+      guard let lastTimerTimeInSeconds = self.lastTimerTimeInSeconds else {
+        preconditionFailure("this should have been populated")
+      }
+      self.currentTimeInSeconds = lastTimerTimeInSeconds
       self.startTimer()
     }
     alertController.addAction(newPomodoroButton)
@@ -286,6 +326,8 @@ class DetailViewController: UIViewController {
 
     switch currentState {
     case .waiting:
+      navigationItem.hidesBackButton = false
+
       setPomodoroTimeValueInSeconds()
       timerLabel.textColor = UIColor.black
       completedPomodorosLabel.textColor = UIColor.black
@@ -301,6 +343,8 @@ class DetailViewController: UIViewController {
       deleteTaskButton.isHidden = false
       showCompletedPomodorosButton.isHidden = false
     case .pomodoroRunning:
+      navigationItem.hidesBackButton = true
+
       timerLabel.textColor = UIColor.black
       completedPomodorosLabel.textColor = UIColor.black
 
@@ -315,6 +359,8 @@ class DetailViewController: UIViewController {
       deleteTaskButton.isHidden = true
       showCompletedPomodorosButton.isHidden = true
     case .breakRunning:
+      navigationItem.hidesBackButton = true
+
       addMinutesButton.isHidden = true
       removeMinutesButton.isHidden = true
 
@@ -330,6 +376,8 @@ class DetailViewController: UIViewController {
       completedPomodorosLabel.textColor = UIColor.gray
       timerLabel.textColor = UIColor.blue
     case .taskCompleted:
+      navigationItem.hidesBackButton = false
+
       timerLabel.textColor = UIColor.gray
       completedPomodorosLabel.textColor = UIColor.gray
 
@@ -360,12 +408,16 @@ class DetailViewController: UIViewController {
     let seconds = Int(numberOfSeconds())
     let secondsText = String(format: "%02d", seconds)
 
-    timerLabel.text = "\(minutes):\(secondsText)"
+    DispatchQueue.main.async {
+      self.timerLabel.text = "\(minutes):\(secondsText)"
+    }
   }
 
   // MARK: - Timer
 
   fileprivate func startTimer() {
+    assert(timer == nil)
+
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
       self.timerUpdate()
     }
@@ -373,7 +425,7 @@ class DetailViewController: UIViewController {
 
   fileprivate func timerUpdate() {
     currentTimeInSeconds -= 1
-    if currentTimeInSeconds == 0 {
+    if Int(currentTimeInSeconds) == 0 {
       stopTimer()
       if currentState == .pomodoroRunning {
         completePomodoro()
@@ -387,6 +439,7 @@ class DetailViewController: UIViewController {
     if let timer = timer {
       timer.invalidate()
     }
+    timer = nil
   }
 
   // MARK: - Sounds
@@ -410,5 +463,119 @@ class DetailViewController: UIViewController {
     } catch {
       print("AVAudioPlayer init failed")
     }
+  }
+
+  // MARK: - Observers
+
+  @objc func applicationWillResignActive(notification: Any) {
+    guard timer != nil else {
+      return
+    }
+
+    let content = UNMutableNotificationContent()
+
+    switch currentState {
+    case .pomodoroRunning:
+      content.title = "Pomodoro Done"
+      content.body = "Good job"
+
+      temporarilySavePomodoroForBackground()
+
+    case .breakRunning:
+      content.title = "Break Done"
+      content.body = "Let's back to work"
+    default:
+      preconditionFailure("i should not try to schedule a notification for no timer")
+    }
+
+    content.sound = UNNotificationSound.default()
+    let date = Date(timeIntervalSinceNow: currentTimeInSeconds)
+    let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+    let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
+
+    // Schedule the notification.
+    let request = UNNotificationRequest(identifier: "pomodoro", content: content, trigger: trigger)
+    let center = UNUserNotificationCenter.current()
+    center.add(request, withCompletionHandler: nil)
+  }
+
+  @objc func applicationWillBecomeActive(notification: Any) {
+    UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
+      assert(notificationRequests.count == 0 || notificationRequests.count == 1)
+
+      if notificationRequests.count == 0 {
+        self.checkForBackgroundSavedPomodoros()
+      } else {
+        self.cancelPendingTimerNotifications(withRequests: notificationRequests)
+      }
+    }
+
+    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["pomodoro"])
+  }
+
+  @objc func applicationWillTerminate(notification: Any) {
+    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["pomodoro"])
+  }
+
+  fileprivate func checkForBackgroundSavedPomodoros() {
+    guard let tempSavedPomodoroData = temporarilySavedPomodorValue() else {
+      return
+    }
+
+    assert(self.task != nil)
+
+    DispatchQueue.main.async {
+      self.stopTimer()
+      self.lastTimerTimeInSeconds = tempSavedPomodoroData.remainingTime
+      self.savePomodoro()
+      self.pomodoroCount += 1
+      self.currentState = .waiting
+      self.cleanTemporarilySavedPomodoro()
+    }
+  }
+
+  fileprivate func cancelPendingTimerNotifications(withRequests notificationRequests: [UNNotificationRequest]) {
+    notificationRequests.forEach({ (notification) in
+      let trigger = notification.trigger as? UNCalendarNotificationTrigger
+      if let trigger = trigger, let notificationDate = trigger.nextTriggerDate() {
+        DispatchQueue.main.async {
+          self.stopTimer()
+          let secondsLeft = notificationDate.timeIntervalSinceNow
+          self.currentTimeInSeconds = secondsLeft
+          self.startTimer()
+        }
+        self.cleanTemporarilySavedPomodoro()
+      }
+    })
+  }
+
+  // MARK: - UserData temporal pomodoro storage
+
+  fileprivate func temporarilySavedPomodorValue() -> (remainingTime: Double, taskID: String, currentState: String)? {
+    let _currentTimeInSeconds = UserDefaults.standard.double(forKey: .lastTimerTimeInSecondsKey)
+
+    guard let _timerState = UserDefaults.standard.string(forKey: .timerStateKey),
+      let _taskID = UserDefaults.standard.string(forKey: .taskIDKey) else {
+        return nil
+    }
+
+    return (remainingTime: _currentTimeInSeconds, taskID: _taskID, currentState: _timerState)
+  }
+
+  // when the app goes to background I save the current pomodoro in a temporary way, so then when the app is active
+  // again, the app will see if the pomodoro finished while the app was in background or not
+  fileprivate func temporarilySavePomodoroForBackground() {
+    guard let taskID = task?.id else {
+      preconditionFailure("this value should be set if i am doing this")
+    }
+    UserDefaults.standard.set(lastTimerTimeInSeconds, forKey: .lastTimerTimeInSecondsKey)
+    UserDefaults.standard.set(taskID, forKey: .taskIDKey)
+    UserDefaults.standard.set(currentState.rawValue, forKey: .timerStateKey)
+  }
+
+  fileprivate func cleanTemporarilySavedPomodoro() {
+    UserDefaults.standard.removeObject(forKey: .lastTimerTimeInSecondsKey)
+    UserDefaults.standard.removeObject(forKey: .taskIDKey)
+    UserDefaults.standard.removeObject(forKey: .timerStateKey)
   }
 }

@@ -109,6 +109,13 @@ class DetailViewController: UIViewController {
       name: NSNotification.Name.UIApplicationDidBecomeActive,
       object: app
     )
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.applicationWillTerminate(notification:)),
+      name: NSNotification.Name.UIApplicationWillTerminate,
+      object: app
+    )
   }
 
   deinit {
@@ -117,8 +124,6 @@ class DetailViewController: UIViewController {
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-
-    print("DetailsViewController", #function)
 
     if let task = task {
       navigationItem.title = task.title
@@ -321,6 +326,8 @@ class DetailViewController: UIViewController {
 
     switch currentState {
     case .waiting:
+      navigationItem.hidesBackButton = false
+
       setPomodoroTimeValueInSeconds()
       timerLabel.textColor = UIColor.black
       completedPomodorosLabel.textColor = UIColor.black
@@ -336,6 +343,8 @@ class DetailViewController: UIViewController {
       deleteTaskButton.isHidden = false
       showCompletedPomodorosButton.isHidden = false
     case .pomodoroRunning:
+      navigationItem.hidesBackButton = true
+
       timerLabel.textColor = UIColor.black
       completedPomodorosLabel.textColor = UIColor.black
 
@@ -350,6 +359,8 @@ class DetailViewController: UIViewController {
       deleteTaskButton.isHidden = true
       showCompletedPomodorosButton.isHidden = true
     case .breakRunning:
+      navigationItem.hidesBackButton = true
+
       addMinutesButton.isHidden = true
       removeMinutesButton.isHidden = true
 
@@ -365,6 +376,8 @@ class DetailViewController: UIViewController {
       completedPomodorosLabel.textColor = UIColor.gray
       timerLabel.textColor = UIColor.blue
     case .taskCompleted:
+      navigationItem.hidesBackButton = false
+
       timerLabel.textColor = UIColor.gray
       completedPomodorosLabel.textColor = UIColor.gray
 
@@ -390,8 +403,6 @@ class DetailViewController: UIViewController {
     }
   }
 
-  // TODO: what happens when pomodoro finishes on background
-
   fileprivate func updateTimerLabel() {
     let minutes = Int(numberOfMinutes())
     let seconds = Int(numberOfSeconds())
@@ -405,7 +416,6 @@ class DetailViewController: UIViewController {
   // MARK: - Timer
 
   fileprivate func startTimer() {
-    print(#function)
     assert(timer == nil)
 
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
@@ -426,7 +436,6 @@ class DetailViewController: UIViewController {
   }
 
   fileprivate func stopTimer() {
-    print(#function)
     if let timer = timer {
       timer.invalidate()
     }
@@ -459,17 +468,9 @@ class DetailViewController: UIViewController {
   // MARK: - Observers
 
   @objc func applicationWillResignActive(notification: Any) {
-    // when app goes to background:
-    //  - schedule local notification
-    //    - break or pomodoro?
-    //  - if pomodoro
-    //    - store pomodoro completion for task in "UserDefaults"
     guard timer != nil else {
       return
     }
-
-    print("")
-    print(#function, "scheduling local notifications")
 
     let content = UNMutableNotificationContent()
 
@@ -499,18 +500,6 @@ class DetailViewController: UIViewController {
   }
 
   @objc func applicationWillBecomeActive(notification: Any) {
-    print(#function)
-    // when the app goes to foreground
-    //   Are there local notifications to be triggered?
-    //     if so,
-    //        cancel the local notification
-    //        restore the timer with the remaining time
-    //        remove the pending pomodoro completion for task in "UserDefaults"
-    //        restore "break" or "pomodoro" mode.
-    //   Are there pending completions for a pomodoro?
-    //      if so, (it should be max there just 1)
-    //        cancel the local timer
-    //        execute the savePomodoro routine
     UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
       assert(notificationRequests.count == 0 || notificationRequests.count == 1)
 
@@ -524,6 +513,10 @@ class DetailViewController: UIViewController {
     UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["pomodoro"])
   }
 
+  @objc func applicationWillTerminate(notification: Any) {
+    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["pomodoro"])
+  }
+
   fileprivate func checkForBackgroundSavedPomodoros() {
     guard let tempSavedPomodoroData = temporarilySavedPomodorValue() else {
       return
@@ -532,7 +525,6 @@ class DetailViewController: UIViewController {
     assert(self.task != nil)
 
     DispatchQueue.main.async {
-      print("saved pomodoro")
       self.stopTimer()
       self.lastTimerTimeInSeconds = tempSavedPomodoroData.remainingTime
       self.savePomodoro()
@@ -543,7 +535,6 @@ class DetailViewController: UIViewController {
   }
 
   fileprivate func cancelPendingTimerNotifications(withRequests notificationRequests: [UNNotificationRequest]) {
-    print("cancel pending notifications")
     notificationRequests.forEach({ (notification) in
       let trigger = notification.trigger as? UNCalendarNotificationTrigger
       if let trigger = trigger, let notificationDate = trigger.nextTriggerDate() {
@@ -565,7 +556,6 @@ class DetailViewController: UIViewController {
 
     guard let _timerState = UserDefaults.standard.string(forKey: .timerStateKey),
       let _taskID = UserDefaults.standard.string(forKey: .taskIDKey) else {
-        print("no pomodoros completed")
         return nil
     }
 

@@ -17,18 +17,10 @@
 		9BA346681F1793D600145BD4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9BA346671F1793D600145BD4 /* Assets.xcassets */; };
 		9BA3466B1F1793D600145BD4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BA346691F1793D600145BD4 /* LaunchScreen.storyboard */; };
 		9BA346761F1793D700145BD4 /* TodoroTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA346751F1793D700145BD4 /* TodoroTests.swift */; };
-		9BA346811F1793D800145BD4 /* TodoroUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA346801F1793D800145BD4 /* TodoroUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		9BA346721F1793D700145BD4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9BA346501F1793D500145BD4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9BA346571F1793D600145BD4;
-			remoteInfo = Todoro;
-		};
-		9BA3467D1F1793D800145BD4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9BA346501F1793D500145BD4 /* Project object */;
 			proxyType = 1;
@@ -52,9 +44,6 @@
 		9BA346711F1793D700145BD4 /* TodoroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodoroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BA346751F1793D700145BD4 /* TodoroTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoroTests.swift; sourceTree = "<group>"; };
 		9BA346771F1793D700145BD4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9BA3467C1F1793D800145BD4 /* TodoroUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodoroUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9BA346801F1793D800145BD4 /* TodoroUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoroUITests.swift; sourceTree = "<group>"; };
-		9BA346821F1793D800145BD4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9BA3468E1F1793FC00145BD4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,13 +62,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9BA346791F1793D800145BD4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -89,7 +71,6 @@
 				9BA3468E1F1793FC00145BD4 /* README.md */,
 				9BA3465A1F1793D600145BD4 /* Todoro */,
 				9BA346741F1793D700145BD4 /* TodoroTests */,
-				9BA3467F1F1793D800145BD4 /* TodoroUITests */,
 				9BA346591F1793D600145BD4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -99,7 +80,6 @@
 			children = (
 				9BA346581F1793D600145BD4 /* Todoro.app */,
 				9BA346711F1793D700145BD4 /* TodoroTests.xctest */,
-				9BA3467C1F1793D800145BD4 /* TodoroUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -128,15 +108,6 @@
 				9BA346771F1793D700145BD4 /* Info.plist */,
 			);
 			path = TodoroTests;
-			sourceTree = "<group>";
-		};
-		9BA3467F1F1793D800145BD4 /* TodoroUITests */ = {
-			isa = PBXGroup;
-			children = (
-				9BA346801F1793D800145BD4 /* TodoroUITests.swift */,
-				9BA346821F1793D800145BD4 /* Info.plist */,
-			);
-			path = TodoroUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -178,24 +149,6 @@
 			productReference = 9BA346711F1793D700145BD4 /* TodoroTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		9BA3467B1F1793D800145BD4 /* TodoroUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 9BA3468B1F1793D800145BD4 /* Build configuration list for PBXNativeTarget "TodoroUITests" */;
-			buildPhases = (
-				9BA346781F1793D800145BD4 /* Sources */,
-				9BA346791F1793D800145BD4 /* Frameworks */,
-				9BA3467A1F1793D800145BD4 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				9BA3467E1F1793D800145BD4 /* PBXTargetDependency */,
-			);
-			name = TodoroUITests;
-			productName = TodoroUITests;
-			productReference = 9BA3467C1F1793D800145BD4 /* TodoroUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -210,10 +163,6 @@
 						CreatedOnToolsVersion = 9.0;
 					};
 					9BA346701F1793D700145BD4 = {
-						CreatedOnToolsVersion = 9.0;
-						TestTargetID = 9BA346571F1793D600145BD4;
-					};
-					9BA3467B1F1793D800145BD4 = {
 						CreatedOnToolsVersion = 9.0;
 						TestTargetID = 9BA346571F1793D600145BD4;
 					};
@@ -234,7 +183,6 @@
 			targets = (
 				9BA346571F1793D600145BD4 /* Todoro */,
 				9BA346701F1793D700145BD4 /* TodoroTests */,
-				9BA3467B1F1793D800145BD4 /* TodoroUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -252,13 +200,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9BA3466F1F1793D700145BD4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9BA3467A1F1793D800145BD4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -305,14 +246,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9BA346781F1793D800145BD4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9BA346811F1793D800145BD4 /* TodoroUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -320,11 +253,6 @@
 			isa = PBXTargetDependency;
 			target = 9BA346571F1793D600145BD4 /* Todoro */;
 			targetProxy = 9BA346721F1793D700145BD4 /* PBXContainerItemProxy */;
-		};
-		9BA3467E1F1793D800145BD4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9BA346571F1793D600145BD4 /* Todoro */;
-			targetProxy = 9BA3467D1F1793D800145BD4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -517,36 +445,6 @@
 			};
 			name = Release;
 		};
-		9BA3468C1F1793D800145BD4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				DEVELOPMENT_TEAM = 2Z7R9FQBNN;
-				INFOPLIST_FILE = TodoroUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fespinozacast.TodoroUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Todoro;
-			};
-			name = Debug;
-		};
-		9BA3468D1F1793D800145BD4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				DEVELOPMENT_TEAM = 2Z7R9FQBNN;
-				INFOPLIST_FILE = TodoroUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fespinozacast.TodoroUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Todoro;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -573,15 +471,6 @@
 			buildConfigurations = (
 				9BA346891F1793D800145BD4 /* Debug */,
 				9BA3468A1F1793D800145BD4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		9BA3468B1F1793D800145BD4 /* Build configuration list for PBXNativeTarget "TodoroUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				9BA3468C1F1793D800145BD4 /* Debug */,
-				9BA3468D1F1793D800145BD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

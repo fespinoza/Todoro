@@ -37,7 +37,10 @@ class DetailViewController: UIViewController {
 
   var task: Task?
   var sortedPomodoros: [Pomodoro] {
-    return (task?.pomodoros?.allObjects as! [Pomodoro]).sorted(by: { (first, second) -> Bool in
+    guard let pomodoros = task?.pomodoros?.allObjects as? [Pomodoro] else {
+      preconditionFailure("❌ this objects should have been pomodoros")
+    }
+    return pomodoros.sorted(by: { (first, second) -> Bool in
       return first.completionTime! >= second.completionTime!
     })
   }
@@ -132,7 +135,8 @@ class DetailViewController: UIViewController {
   }
 
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    if segue.identifier == .showCompletedPomodoros, let pomodoroListVC = segue.destination as? PomodoroListViewController {
+    if segue.identifier == .showCompletedPomodoros,
+      let pomodoroListVC = segue.destination as? PomodoroListViewController {
       pomodoroListVC.pomodoros = sortedPomodoros
       pomodoroListVC.task = task
     }

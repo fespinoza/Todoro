@@ -15,25 +15,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
   var window: UIWindow?
 
-  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+  func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
+  ) -> Bool {
     // Override point for customization after application launch.
-    let splitViewController = self.window!.rootViewController as! UISplitViewController
-    let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
-    navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+    guard let splitViewController = self.window?.rootViewController as? UISplitViewController,
+      let navigationController = splitViewController
+        .viewControllers[splitViewController.viewControllers.count - 1] as? UINavigationController else {
+          fatalError("☠️ viewControllers are not the expected ones")
+    }
+
+    navigationController.topViewController?.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
     splitViewController.delegate = self
 
-    let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
-    let controller = masterNavigationController.topViewController as! MasterViewController
+    guard let masterNavigationController = splitViewController.viewControllers[0] as? UINavigationController,
+      let controller = masterNavigationController.topViewController as? MasterViewController else {
+        fatalError("☠️ couldn't setup the masterViewController")
+    }
+
     controller.managedObjectContext = self.persistentContainer.viewContext
 
     let notificationCenter = UNUserNotificationCenter.current()
-    notificationCenter.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
-      if granted {
-        print("notifications granted")
-      } else {
-        print("notifications error \(error!.localizedDescription)")
-      }
-    }
+    notificationCenter.requestAuthorization(options: [.alert, .sound]) { (_, _) in }
 
     return true
   }
@@ -76,8 +80,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
   func splitViewController(
     _ splitViewController: UISplitViewController,
-    collapseSecondary secondaryViewController:UIViewController,
-    onto primaryViewController:UIViewController
+    collapseSecondary secondaryViewController: UIViewController,
+    onto primaryViewController: UIViewController
   ) -> Bool {
     guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
     guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else {
@@ -85,7 +89,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }
 
     if topAsDetailController.task == nil {
-      // Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+      // Return true to indicate that we have handled the collapse by doing nothing;
+      // the secondary controller will be discarded.
       return true
     }
     return false
@@ -100,7 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
      error conditions that could cause the creation of the store to fail.
      */
     let container = NSPersistentContainer(name: "Todoro")
-    container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+    container.loadPersistentStores(completionHandler: { (_, error) in
       if let error = error as NSError? {
         // Replace this implementation with code to handle the error appropriately.
         // fatalError() causes the application to generate a crash log and terminate.
@@ -137,4 +142,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }
   }
 }
-

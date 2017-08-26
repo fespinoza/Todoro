@@ -10,8 +10,8 @@ import UIKit
 import CoreData
 
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
-  var detailViewController: DetailViewController? = nil
-  var managedObjectContext: NSManagedObjectContext? = nil
+  var detailViewController: DetailViewController?
+  var managedObjectContext: NSManagedObjectContext?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -22,7 +22,9 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     navigationItem.rightBarButtonItem = addButton
     if let split = splitViewController {
       let controllers = split.viewControllers
-      detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+      detailViewController = (
+        controllers[controllers.count - 1] as? UINavigationController
+      )?.topViewController as? DetailViewController
     }
 
     if #available(iOS 11.0, *) {
@@ -49,7 +51,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
       textField.placeholder = "Task name"
     }
 
-    alertController.addAction(UIAlertAction(title: "Create", style: .default) { (action) in
+    alertController.addAction(UIAlertAction(title: "Create", style: .default) { (_) in
       if let title = alertController.textFields?.first?.text {
         self.insertNewObject(taskTitle: title)
       }
@@ -74,7 +76,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
       try context.save()
     } catch {
       // Replace this implementation with code to handle the error appropriately.
-      // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+      // fatalError() causes the application to generate a crash log and terminate.
+      // You should not use this function in a shipping application, although it may be useful during development.
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
@@ -86,10 +89,11 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     if segue.identifier == "showDetail" {
       if let indexPath = tableView.indexPathForSelectedRow {
         let object = fetchedResultsController.object(at: indexPath)
-        let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-        controller.task = object
-        controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-        controller.navigationItem.leftItemsSupplementBackButton = true
+        if let controller = (segue.destination as? UINavigationController)?.topViewController as? DetailViewController {
+          controller.task = object
+          controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+          controller.navigationItem.leftItemsSupplementBackButton = true
+        }
       }
     }
   }
@@ -117,7 +121,11 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     return true
   }
 
-  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+  override func tableView(
+    _ tableView: UITableView,
+    commit editingStyle: UITableViewCellEditingStyle,
+    forRowAt indexPath: IndexPath
+  ) {
     if editingStyle == .delete {
       let context = fetchedResultsController.managedObjectContext
       context.delete(fetchedResultsController.object(at: indexPath))
@@ -126,7 +134,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         try context.save()
       } catch {
         // Replace this implementation with code to handle the error appropriately.
-        // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+        // fatalError() causes the application to generate a crash log and terminate.
+        // You should not use this function in a shipping application, although it may be useful during development.
         let nserror = error as NSError
         fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
       }
@@ -136,9 +145,11 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
   func configureCell(_ cell: UITableViewCell, withTask task: Task) {
     if task.isCompleted {
       let mutableAttributedString = NSMutableAttributedString(string: task.title!)
-      let fullRange = NSMakeRange(0, mutableAttributedString.string.count)
+      let fullRange = NSRange(location: 0, length: mutableAttributedString.string.count)
       mutableAttributedString.addAttribute(.foregroundColor, value: UIColor.gray, range: fullRange)
-      mutableAttributedString.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.styleSingle.rawValue, range: fullRange)
+      mutableAttributedString.addAttribute(
+        .strikethroughStyle, value: NSUnderlineStyle.styleSingle.rawValue, range: fullRange
+      )
       mutableAttributedString.addAttribute(.strikethroughColor, value: UIColor.gray, range: fullRange)
       cell.textLabel?.attributedText = mutableAttributedString
     } else {
@@ -180,20 +191,28 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
       try _fetchedResultsController!.performFetch()
     } catch {
       // Replace this implementation with code to handle the error appropriately.
-      // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+      // fatalError() causes the application to generate a crash log and terminate.
+      // You should not use this function in a shipping application, although it may be useful during development.
       let nserror = error as NSError
       fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
     }
 
     return _fetchedResultsController!
-  }    
-  var _fetchedResultsController: NSFetchedResultsController<Task>? = nil
+  }
+
+  // swiftlint:disable:next identifier_name
+  var _fetchedResultsController: NSFetchedResultsController<Task>?
 
   func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
     tableView.beginUpdates()
   }
 
-  func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+  func controller(
+    _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+    didChange sectionInfo: NSFetchedResultsSectionInfo,
+    atSectionIndex sectionIndex: Int,
+    for type: NSFetchedResultsChangeType
+  ) {
     switch type {
     case .insert:
       tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
@@ -204,32 +223,35 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
   }
 
-  func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+  func controller(
+    _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+    didChange anObject: Any,
+    at indexPath: IndexPath?,
+    for type: NSFetchedResultsChangeType,
+    newIndexPath: IndexPath?
+  ) {
     switch type {
     case .insert:
       tableView.insertRows(at: [newIndexPath!], with: .fade)
     case .delete:
       tableView.deleteRows(at: [indexPath!], with: .fade)
     case .update:
-      configureCell(tableView.cellForRow(at: indexPath!)!, withTask: anObject as! Task)
+      configureCell(withTask: anObject, forIndexPath: indexPath)
     case .move:
-      configureCell(tableView.cellForRow(at: indexPath!)!, withTask: anObject as! Task)
-      tableView.moveRow(at: indexPath!, to: newIndexPath!)
+      configureCell(withTask: anObject, forIndexPath: indexPath)
     }
+  }
+
+  func configureCell(withTask anObject: Any, forIndexPath indexPath: IndexPath?) {
+    guard let indexPath = indexPath,
+      let cell = tableView.cellForRow(at: indexPath),
+      let task = anObject as? Task else {
+        preconditionFailure("❌ couldn't get the required properties to update the tableView")
+    }
+    configureCell(cell, withTask: task)
   }
 
   func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
     tableView.endUpdates()
   }
-
-  /*
-   // Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed.
-   
-   func controllerDidChangeContent(controller: NSFetchedResultsController) {
-   // In the simplest, most efficient, case, reload the table view.
-   tableView.reloadData()
-   }
-   */
-
 }
-

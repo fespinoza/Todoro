@@ -162,6 +162,7 @@ class DetailViewController: UIViewController {
 
   @IBAction func forcePomodoroCompletion(_ sender: Any) {
     stopTimer()
+    completePomodoro()
   }
 
   @IBAction func cancelPomodoro(_ sender: Any) {
